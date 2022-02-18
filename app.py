@@ -105,3 +105,13 @@ def logout():
 def show_users():
     users_list = models.User.query.all()
     return render_template("users.html", users_list=users_list)
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user_shown = models.User.query.filter_by(username=username).first_or_404()
+    posts = [
+        {'author': user_shown, 'body': 'Test post #1'},
+        {'author': user_shown, 'body': 'Test post #2'}
+    ]
+    return render_template('user.html', user=user_shown, posts=posts)
