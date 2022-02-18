@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+from hashlib import md5
 
 from database.database import db
 
@@ -30,3 +31,8 @@ class User(UserMixin, db.Model):
     def is_anonymous(self):
         """False, as anonymous users aren't supported."""
         return False
+
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+            digest, size)
