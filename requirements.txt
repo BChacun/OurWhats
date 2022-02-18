@@ -1,0 +1,8 @@
+flask~=1.1.2
+flask-sqlalchemy
+flask-login
+pyyaml
+flask-WTF
+wtforms~=2.3.3
+yaml~=0.2.5
+werkzeug~=1.0.1

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% set title = "Login" %}
+{% set active_page = "Login" %}
+
+
+{% block content %}
+    <h3>Login</h3>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+{#<form method="POST" action="/login">#}
+    <form method="POST" action="/login">
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username"
+                   aria-describedby="usernameHelp"
+                   placeholder="Your username" name="username">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password"
+                   placeholder="Your Password">
+        </div>
+        <div class="mb-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Remember me
+                </label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+
+{% endblock %}
