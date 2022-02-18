@@ -1,7 +1,8 @@
+import datetime
 from flask_login import UserMixin
 from hashlib import md5
-
 from database.database import db
+from datetime import datetime
 
 class User(UserMixin, db.Model):
     """
@@ -15,6 +16,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String, unique=True)
     password = db.Column(db.String)
     authenticated = db.Column(db.Boolean, default=False)
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def is_active(self):
         """True, as all users are active."""

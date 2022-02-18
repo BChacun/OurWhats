@@ -1,9 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
+
 import yaml
 import inspect
 import pathlib
 
 db = SQLAlchemy()
+
 
 
 def init_database():

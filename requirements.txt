@@ -6,3 +6,4 @@ flask-WTF
 wtforms~=2.3.3
 yaml~=0.2.5
 werkzeug~=1.0.1
+flask-migrate

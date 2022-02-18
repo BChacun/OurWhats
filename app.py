@@ -1,11 +1,13 @@
 import flask
 from flask import render_template, redirect, url_for, request, flash
-from flask_login import login_required, logout_user, LoginManager, login_user
+from flask_login import login_required, logout_user, LoginManager, login_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_migrate import Migrate
 from database.database import db, init_database
 import database.models as models
 from config.config import Config
+
+from datetime import datetime
 
 app = flask.Flask(__name__)
 app.config.from_object(Config)
@@ -13,6 +15,7 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
+migrate = Migrate(app, db)
 
 
 @login_manager.user_loader
@@ -115,3 +118,13 @@ def user(username):
         {'author': user_shown, 'body': 'Test post #2'}
     ]
     return render_template('user.html', user=user_shown, posts=posts)
+
+@app.before_request
+def before_request():
+    print("TEST")
+    if current_user.is_authenticated:
+        print("YES")
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
+    else :
+        print("AYAYA")
