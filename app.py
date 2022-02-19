@@ -92,7 +92,8 @@ def login():
         return render_template("login.html")
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)
-    return render_template("profile.html")
+    posts = []
+    return render_template("success_account_creation.html")
 
 
 @app.route("/logout", methods=["GET"])
@@ -143,3 +144,15 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
+
+@app.route('/msg/<username>')
+@login_required
+def msg_view(username):
+    m = models.Message (sender_username=current_user.username,body="Salut")
+
+    db.session.add(m)
+    db.session.commit()
+
+    message = models.Message.query.filter_by(sender_username=username).first_or_404()
+    print(message)
+    return render_template('msg.html', message=message)
