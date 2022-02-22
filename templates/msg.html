@@ -31,7 +31,12 @@
                                         <img src={{ group.get_avatar(315) }} alt="avatar">
                                         <div class="about">
                                             <div class="name">{{ group.name }} </div>
-                                            <div class="status"> <i class="fa fa-circle offline"></i> Last seen : ( group.last_seen.strftime('%Y-%m-%d') ) </div>
+                                            <div class="status"> <i class="fa fa-circle offline"></i>
+                                                {% if discussion.members_count()==2 %}
+                                                <!-- TO DO -->
+                                                Last seen : (discussion.members.<!-- pas current_user mais l'autre -->.last_seen.strftime('%Y-%m-%d'))
+                                            {% endif %}
+                                            </div>
                                         </div>
                                     </li></a>
                             {% endfor %}
@@ -51,7 +56,12 @@
                                     </a>
                                     <div class="chat-about">
                                         <h6 class="m-b-0"> {{ discussion.name }}</h6>
-                                        <small> Last seen : ( last_seen )</small>
+                                        <small>
+                                            {% if discussion.members_count()==2 %}
+                                                <!-- TO DO -->
+                                                Last seen : (discussion.members.<!-- pas current_user mais l'autre -->.last_seen.strftime('%Y-%m-%d'))
+                                            {% endif %}
+                                        </small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 hidden-sm text-right">

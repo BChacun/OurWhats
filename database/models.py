@@ -64,8 +64,8 @@ class Message(db.Model):
 
     @staticmethod
     def send_message_to_user(body, sender, user_recipient, answer_to_id, msg_type):
-        group =db.session.groups.query.filter_by(members=[sender,user_recipient]).first()
-        #         filter à verifier                    ^^^ (ordre dans la liste?)
+        group =db.session.groups.query.filter(db.session.groups.members.any(sender) & db.session.groups.members.any(user_recipient) & db.session.groups.members.count()==2).first()
+        #         filter à verifier, surtout au niveau du count() et de sb.session.groups
         if group is None:
             group =Group.new_group("",sender.id,"",[sender, user_recipient])
         Message.send_message_to_group(body, sender.id, group.id, answer_to_id, msg_type)
@@ -96,6 +96,9 @@ class Group(db.Model):
         digest = md5(self.name.lower().encode('utf-8')).hexdigest()
         return self.avatar.format(
             digest, size)
+
+    def members_count(self):
+        return len(self.members)
 
 
     @staticmethod
