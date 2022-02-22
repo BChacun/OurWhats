@@ -153,11 +153,13 @@ def edit_profile():
 @app.route('/msg/<username>')
 @login_required
 def msg_view(username):
-    m = models.Message (sender_username=current_user.username,body="Salut")
+
+    m = models.Message(sender_username=current_user.username, body="Salut")
 
     db.session.add(m)
     db.session.commit()
 
-    message = models.Message.query.filter_by(sender_username=username).first_or_404()
+    message = models.Message.query.filter((models.Message.sender_username == username) | (
+                models.Message.sender_username == current_user.username)).first_or_404()
     print(message)
     return render_template('msg.html', message=message)

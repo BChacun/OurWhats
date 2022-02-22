@@ -45,4 +45,5 @@ class Message(db.Model):
     __tablename__ = 'messages'
     id = db.Column(db.Integer(), primary_key=True)
     sender_username = db.Column(db.String())
+    recipient_username = db.Column(db.String())
     body = db.Column(db.String())
