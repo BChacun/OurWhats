@@ -1,18 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <head>  <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}"> </head>
 
-    <table>
-        <tr valign="top">
+
 
 
         {% for message in messages %}
-            <td><img src="{{ message.sender_username.avatar(128) }}"></td>
-            <td><h1>User: {{ message.sender_username.username }}</h1></td>
-            <td><p>message.body</p></td>
+            <div class="bubbleWrapper">
+            <div class="inlineContainer">
+            {% if message.sender_username == interlocutor.username %}<td><img class="inlineIcon" src="{{ interlocutor.avatar(20) }}"></td>{% endif %}
+
+                <div class="otherBubble other">
+                    <td>User: {{ message.sender_username.username }}</td>
+                    <td>{{ message.body }} </td>
+                </div>
+            </div>
+            </div>
         {% endfor %}
 
 
-        </tr>
-    </table>
+
 {% endblock %}
