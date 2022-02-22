@@ -30,7 +30,7 @@
                          <img src={{ user.avatar(315) }} alt="avatar">
                          <div class="about">
                              <div class="name">{{ user.username }} </div>
-                             <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>
+                             <div class="status"> <i class="fa fa-circle offline"></i> Last seen : {{ interlocutor.last_seen.strftime('%Y-%m-%d') }} </div>
                          </div>
                      </li>
                     {% endfor %}
@@ -46,11 +46,11 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+                                <img src={{ interlocutor.avatar(315) }} alt="avatar">
                             </a>
                             <div class="chat-about">
-                                <h6 class="m-b-0">Aiden Chavez</h6>
-                                <small>Last seen: 2 hours ago</small>
+                                <h6 class="m-b-0"> {{ interlocutor.username }}</h6>
+                                <small> Last seen : {{ interlocutor.last_seen }}</small>
                             </div>
                         </div>
                         <div class="col-lg-6 hidden-sm text-right">
