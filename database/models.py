@@ -47,3 +47,4 @@ class Message(db.Model):
     sender_username = db.Column(db.String())
     recipient_username = db.Column(db.String())
     body = db.Column(db.String())
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)

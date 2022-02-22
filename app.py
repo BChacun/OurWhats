@@ -158,22 +158,26 @@ def edit_profile():
 def msg_home():
     return msg_view(current_user.username)
 
-@app.route('/msg/<username>')
+@app.route('/msg/<username>', methods=['GET', 'POST'])
 @login_required
 def msg_view(username):
+
+
+
+
     users_list = models.User.query.all()
     current_interlocutor = models.User.query.filter_by(username=username).first_or_404()
 
 
     """
-    m = models.Message(sender_username=current_user.username, body="Salut")
-    m = models.Message(sender_username=current_user.username, body="yo")
-
-    db.session.add(m)
-    db.session.commit()
+        m = models.Message(sender_username='test',recipient_username='tes', body="c'est moi")
+    
+    
+        db.session.add(m)
+        db.session.commit()
     """
 
     messages = models.Message.query.filter((models.Message.sender_username == username) | (
-                models.Message.sender_username == current_user.username)).all()
+                    models.Message.sender_username == current_user.username)).all()
     print(messages)
     return render_template('msg.html', messages=messages, interlocutor = current_interlocutor, users_list=users_list)
