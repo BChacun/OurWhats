@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
+{% set title = "Message" %}
+{% set active_page = "Message" %}
+
+
 {% block content %}
+
 <head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -20,14 +25,16 @@
                 </div>
                 <ul class="list-unstyled chat-list mt-2 mb-0">
 
+                    {% for user in users_list %}
+                     <li class="clearfix">
+                         <img src={{ user.avatar(315) }} alt="avatar">
+                         <div class="about">
+                             <div class="name">{{ user.username }} </div>
+                             <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>
+                         </div>
+                     </li>
+                    {% endfor %}
 
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Vincent Porter</div>
-                            <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
-                        </div>
-                    </li>
 
 
 
@@ -67,8 +74,8 @@
                             <div class="message-data">
                                 <span class="message-data-time">10:12 AM, Today</span>
                             </div>
-                            <div class="message my-message">Are we meeting today?</div>                                    
-                        </li>                               
+                            <div class="message my-message">Are we meeting today?</div>
+                        </li>
                         <li class="clearfix">
                             <div class="message-data">
                                 <span class="message-data-time">10:15 AM, Today</span>
@@ -82,7 +89,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-send"></i></span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Enter text here...">                                    
+                        <input type="text" class="form-control" placeholder="Enter text here...">
                     </div>
                 </div>
             </div>
@@ -90,4 +97,6 @@
     </div>
 </div>
 </div>
+
+
 {% endblock %}

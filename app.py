@@ -44,11 +44,7 @@ def profile():
 def board():
     return render_template("board.html", user=current_user)
 
-@app.route('/msg_home')
-@login_required
-def msg_home():
-    users_list = models.User.query.all()
-    return render_template("msg_home.html", users_list=users_list)
+
 
 
 @app.route('/signup', methods=['GET'])
@@ -157,11 +153,15 @@ def edit_profile():
                            form=form)
 
 
-
+@app.route('/msg')
+@login_required
+def msg_home():
+    return msg_view(current_user.username)
 
 @app.route('/msg/<username>')
 @login_required
 def msg_view(username):
+    users_list = models.User.query.all()
     current_interlocutor = models.User.query.filter_by(username=username).first_or_404()
 
 
@@ -176,4 +176,4 @@ def msg_view(username):
     messages = models.Message.query.filter((models.Message.sender_username == username) | (
                 models.Message.sender_username == current_user.username)).all()
     print(messages)
-    return render_template('msg.html', messages=messages, interlocutor = current_interlocutor)
+    return render_template('msg.html', messages=messages, interlocutor = current_interlocutor, users_list=users_list)
