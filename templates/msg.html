@@ -9,11 +9,11 @@
         {% for message in messages %}
             <div class="bubbleWrapper">
             <div class="inlineContainer">
-            {% if message.sender_username == interlocutor.username %}<td><img class="inlineIcon" src="{{ interlocutor.avatar(20) }}"></td>{% endif %}
+            {% if message.sender_username == interlocutor.username %}<img class="inlineIcon" src="{{ interlocutor.avatar(64) }}">{% endif %}
 
                 <div class="otherBubble other">
-                    <td>User: {{ message.sender_username.username }}</td>
-                    <td>{{ message.body }} </td>
+                    User: {{ message.sender_username}}<br>
+                    {{ message.body }}
                 </div>
             </div>
             </div>
