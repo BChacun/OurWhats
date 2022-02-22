@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% set title = "Board" %}
+{% set active_page = "Board" %}
+
+
+{% block content %}
+
+    <div>
+        <h3>Hello {{ user.username }}!</h3>
+        <p>You have ( user.unreadMessages ) unread message{% if True %}s{% endif %}</p> <!-- user.unreadMessages>1-->
+    </div>
+    <div>
+        <p>( user.messages.nb ) messages sent / ( user.messages.size ) Mb</p>
+        <p>( user.files.nb ) images and files sent / ( user.files.size ) Mb</p>
+        <p>( user.receivedData.nb ) messages and files received / ( user.receivedData.size ) Mb</p>
+    </div>
+
+{% endblock %}

@@ -11,7 +11,7 @@ from database.form import EditProfileForm
 
 app = flask.Flask(__name__)
 app.config.from_object(Config)
-db.init_app(app) 
+db.init_app(app)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
@@ -38,6 +38,11 @@ def home():
 @login_required
 def profile():
     return user(current_user.username)
+
+@app.route('/board')
+@login_required
+def board():
+    return render_template("board.html", user=current_user)
 
 
 @app.route('/signup', methods=['GET'])

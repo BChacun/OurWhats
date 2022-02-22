@@ -29,6 +29,14 @@
                             </a>
                         </li>
                         {% endif %}
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('board') }}"
+                            {% if active_page == "Board" %}class="active"{% endif %}>
+                            Board
+                            </a>
+                        </li>
+                        {% endif %}
 
 
                         {% if not current_user.is_authenticated %}
