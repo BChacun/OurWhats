@@ -37,6 +37,14 @@
                             </a>
                         </li>
                         {% endif %}
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('msg_home') }}"
+                            {% if active_page == "MSG_HOME" %}class="active"{% endif %}>
+                            Message
+                            </a>
+                        </li>
+                        {% endif %}
 
 
                         {% if not current_user.is_authenticated %}

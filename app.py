@@ -44,6 +44,12 @@ def profile():
 def board():
     return render_template("board.html", user=current_user)
 
+@app.route('/msg_home')
+@login_required
+def msg_home():
+    users_list = models.User.query.all()
+    return render_template("msg_home.html", users_list=users_list)
+
 
 @app.route('/signup', methods=['GET'])
 def signup_form():
@@ -149,6 +155,9 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
+
+
+
 
 @app.route('/msg/<username>')
 @login_required
