@@ -170,14 +170,19 @@ def msg_view(username):
 
 
     """
-        m = models.Message(sender_username='test',recipient_username='tes', body="c'est moi")
+    m = models.Message(sender_username='tes',recipient_username='test', body="Bah osef en fait")
     
     
-        db.session.add(m)
-        db.session.commit()
+    db.session.add(m)
+    db.session.commit()
     """
 
-    messages = models.Message.query.filter((models.Message.sender_username == username) | (
-                    models.Message.sender_username == current_user.username)).all()
+
+    messages = models.Message.query.filter(
+
+        ((models.Message.sender_username == username) & (models.Message.recipient_username == current_user.username))
+        |
+        ((models.Message.sender_username == current_user.username)&(models.Message.recipient_username == username))
+        ).all()
     print(messages)
     return render_template('msg.html', messages=messages, interlocutor = current_interlocutor, users_list=users_list)
