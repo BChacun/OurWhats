@@ -31,6 +31,8 @@ with app.test_request_context():
 @app.route('/')
 @app.route('/home')
 def home():
+    #db.drop_all()
+    #db.create_all()
     return render_template("index.html")
 
 
@@ -120,6 +122,7 @@ def show_users():
 @app.route('/user/<username>')
 @login_required
 def user(username):
+
     user_shown = models.User.query.filter_by(username=username).first_or_404()
     posts = [
         {'author': user_shown, 'body': 'Test post #1'},
@@ -156,18 +159,17 @@ def edit_profile():
 @app.route('/msg')
 @login_required
 def msg_home():
-    return msg_view(current_user.username)
+    discussion = models.Group.query.filter(models.Group.members.any(id=current_user.id)).first()
+    if discussion is None:
+        discussion=models.Group.new_group("",current_user.id,current_user.avatar,[current_user])
+    return msg_view(discussion.id)
 
-@app.route('/msg/<username>', methods=['GET', 'POST'])
+@app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
 @login_required
-def msg_view(username):
+def msg_view(discussion_id):
 
-
-
-
-    users_list = models.User.query.all()
-    current_interlocutor = models.User.query.filter_by(username=username).first_or_404()
-
+    groups_list = models.Group.query.all()
+    current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
 
     """
     m = models.Message(sender_username='tes',recipient_username='test', body="Bah osef en fait")
@@ -177,12 +179,8 @@ def msg_view(username):
     db.session.commit()
     """
 
-
-    messages = models.Message.query.filter(
-
-        ((models.Message.sender_username == username) & (models.Message.recipient_username == current_user.username))
-        |
-        ((models.Message.sender_username == current_user.username)&(models.Message.recipient_username == username))
-        ).all()
+    messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
     print(messages)
-    return render_template('msg.html', messages=messages, interlocutor = current_interlocutor, users_list=users_list)
+
+    return render_template('msg.html', messages=messages, discussion = current_group,
+                           discussions_list=groups_list, current_user=current_user)
