@@ -1,4 +1,3 @@
-import datetime
 from flask_login import UserMixin
 from hashlib import md5
 from database.database import db
@@ -47,3 +46,17 @@ class Message(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     sender_username = db.Column(db.String())
     body = db.Column(db.String())
+    seen = db.Column(db.Boolean, default=False)
+
+junction_table = db.Table('groupMembers',
+                          db.Column('group_id', db.Integer, db.ForeignKey('Group.id')),
+                          db.Column('user_id', db.Integer, db.ForeignKey('User.id')))
+
+class Group(db.Model):
+    __tablename__ = 'groups'
+    id = db.Column(db.Integer(), primary_key=True)
+    title = db.Column(db.String())
+    creator = db.relationship('User')
+    members = db.relationship('User',backref='groups',secondary=junction_table)
+
+
