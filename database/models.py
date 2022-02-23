@@ -64,8 +64,8 @@ class Message(db.Model):
 
     @staticmethod
     def send_message_to_user(body, sender, user_recipient, answer_to_id, msg_type):
-        group =db.session.groups.query.filter(db.session.groups.members.any(sender) & db.session.groups.members.any(user_recipient) & db.session.groups.members.count()==2).first()
-        #         filter à verifier, surtout au niveau du count() et de sb.session.groups
+        group = get_existing_discussion_or_none(sender, user_recipient)
+            #db.session.groups.members.any(sender) & db.session.groups.members.any(user_recipient)).first()
         if group is None:
             group =Group.new_group("",sender.id,"",[sender, user_recipient])
         Message.send_message_to_group(body, sender.id, group.id, answer_to_id, msg_type)
@@ -90,15 +90,24 @@ class Group(db.Model):
     name = db.Column(db.String())
     avatar = db.Column(db.String(), default='https://www.gravatar.com/avatar/{}?d=identicon&s={}') #source de l'image ou "" pour une conversation à 2
     creator_id = db.Column(db.Integer(),db.ForeignKey('user.id'))
-    members = db.relationship('User',secondary=members_table)
+    members = db.relationship('User', backref='groups' ,secondary=members_table)
 
-    def get_avatar(self, size):
+    def get_avatar(self, size, current_user):
+        if self.avatar=="":
+            #si c'est une discussion à 2 alors self.avatar=="", et on prend l'avatar de l'autre user
+            return self.get_other_user_first(current_user).get_avatar(size)
+
         digest = md5(self.name.lower().encode('utf-8')).hexdigest()
-        return self.avatar.format(
-            digest, size)
+        return self.avatar.format(digest, size)
 
     def members_count(self):
         return len(self.members)
+
+    def get_other_user_first(self,user):
+        for member in self.members:
+            if member != user:
+                return member
+        return user
 
 
     @staticmethod
@@ -133,3 +142,15 @@ class Group(db.Model):
         db.session.add(self)
         db.session.commit()
 
+
+def get_existing_discussion_or_none(user, interlocutor):
+    u_groups= user.groups
+    i_groups= interlocutor.groups
+    for group in u_groups:
+        if user!=interlocutor:
+            if (group in i_groups) & (group.members_count()==2): # a tester: group in list(i_groups) ?
+                return group
+        else:
+            if (group in i_groups) & (group.members_count()==1):
+                return group
+    return None

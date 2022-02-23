@@ -28,13 +28,12 @@
                             {% for group in discussions_list %}
                                 <a class="nav-link" href="{{ url_for('msg_view', discussion_id =group.id) }}">
                                     <li class="clearfix">
-                                        <img src={{ group.get_avatar(315) }} alt="avatar">
+                                        <img src={{ group.get_avatar(315,current_user) }} alt="avatar">
                                         <div class="about">
                                             <div class="name">{{ group.name }} </div>
                                             <div class="status"> <i class="fa fa-circle offline"></i>
                                                 {% if discussion.members_count()==2 %}
-                                                <!-- TO DO -->
-                                                Last seen : (discussion.members.<!-- pas current_user mais l'autre -->.last_seen.strftime('%Y-%m-%d'))
+                                                Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
                                             {% endif %}
                                             </div>
                                         </div>
@@ -52,14 +51,13 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                        <img src={{ discussion.get_avatar(315) }} alt="avatar">
+                                        <img src={{ discussion.get_avatar(315,current_user) }} alt="avatar">
                                     </a>
                                     <div class="chat-about">
                                         <h6 class="m-b-0"> {{ discussion.name }}</h6>
                                         <small>
                                             {% if discussion.members_count()==2 %}
-                                                <!-- TO DO -->
-                                                Last seen : (discussion.members.<!-- pas current_user mais l'autre -->.last_seen.strftime('%Y-%m-%d'))
+                                                Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
                                             {% endif %}
                                         </small>
                                     </div>
@@ -89,7 +87,7 @@
                                         <li class="clearfix">
                                             <div class="message-data text-right">
                                                 <span class="message-data-time">10:10 AM, Today</span>
-                                                <img src={{ discussion.get_avatar(64) }} alt="avatar">
+                                                <img src={{ discussion.get_avatar(64,current_user) }} alt="avatar">
                                             </div>
                                             <div class="message other-message float-right">{{ message.body }}</div>
                                         </li>
@@ -107,7 +105,7 @@
                         <div class="chat-message clearfix">
                             <div class="input-group mb-0">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-send"></i></span>
+ <!--button?-->                     <span class="input-group-text"><i class="fa fa-send"></i></span>
                                 </div>
                                 <input type="text" class="form-control" placeholder="Enter text here...">
                             </div>

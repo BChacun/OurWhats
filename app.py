@@ -44,6 +44,8 @@ def profile():
 @app.route('/board')
 @login_required
 def board():
+    #db.drop_all()
+    #db.create_all()
     return render_template("board.html", user=current_user)
 
 
@@ -161,7 +163,7 @@ def edit_profile():
 def msg_home():
     discussion = models.Group.query.filter(models.Group.members.any(id=current_user.id)).first()
     if discussion is None:
-        discussion=models.Group.new_group("",current_user.id,current_user.avatar,[current_user])
+        discussion = models.Group.new_group("",current_user.id,current_user.avatar,[current_user])
     return msg_view(discussion.id)
 
 @app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
@@ -171,17 +173,12 @@ def msg_view(discussion_id):
     groups_list = models.Group.query.all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
 
-    #db.drop_all()
-    #db.create_all()
-    #models.Message.send_message_to_user("test",current_user.id,current_user.id,1,"text")
-    
-    
-    #db.session.add(m)
-    #db.session.commit()
-
+    #test
+    #models.Message.send_message_to_user("test",current_user,current_user,1,"text")
 
     messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
     print(messages)
 
     return render_template('msg.html', messages=messages, discussion = current_group,
                            discussions_list=groups_list, current_user=current_user)
+
