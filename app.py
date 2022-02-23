@@ -173,7 +173,7 @@ def msg_view(discussion_id):
 
     #db.drop_all()
     #db.create_all()
-    models.Message.send_message_to_user("test",current_user.id,current_user.id,1,"text")
+    #models.Message.send_message_to_user("test",current_user.id,current_user.id,1,"text")
     
     
     #db.session.add(m)
