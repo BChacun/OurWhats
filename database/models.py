@@ -51,7 +51,7 @@ class Message(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     group_recipient_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     body = db.Column(db.String())
-    answerTo_id = db.Column(db.Integer(), db.ForeignKey('messages.id'), default=None)
+    answer_to_id = db.Column(db.Integer(), db.ForeignKey('messages.id'), default=None)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     msg_type = db.Column(db.String, default="text") #"text", "image", "file" or "removed"
     seen = db.relationship('User',secondary=seen_table)

@@ -171,13 +171,14 @@ def msg_view(discussion_id):
     groups_list = models.Group.query.all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
 
-    """
-    m = models.Message(sender_username='tes',recipient_username='test', body="Bah osef en fait")
+    #db.drop_all()
+    #db.create_all()
+    models.Message.send_message_to_user("test",current_user.id,current_user.id,1,"text")
     
     
-    db.session.add(m)
-    db.session.commit()
-    """
+    #db.session.add(m)
+    #db.session.commit()
+
 
     messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
     print(messages)
