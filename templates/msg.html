@@ -6,6 +6,7 @@
 
 {% block content %}
 
+
     <head>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -33,8 +34,8 @@
                                             <div class="name">{{ group.get_name(current_user) }} </div>
                                             <div class="status"> <i class="fa fa-circle offline"></i>
                                                 {% if discussion.members_count()==2 %}
-                                                Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
-                                            {% endif %}
+                                                    Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </li></a>
@@ -54,12 +55,12 @@
                                         <img src={{ discussion.get_avatar(315,current_user) }} alt="avatar">
                                     </a>
                                     <div class="chat-about">
-                                        <h6 class="m-b-0"> {{ discussion.get_name(current_user) }}
-                                        <small>
-                                            {% if discussion.members_count()==2 %}
-                                                Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
-                                            {% endif %}
-                                        </small>
+                                        <h6 class="m-b-0"> {{ discussion.get_name(current_user) }}</h6>
+                                            <small>
+                                                {% if discussion.members_count()==2 %}
+                                                    Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
+                                                {% endif %}
+                                            </small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 hidden-sm text-right">
@@ -105,7 +106,7 @@
                         <div class="chat-message clearfix">
                             <div class="input-group mb-0">
                                 <div class="input-group-prepend">
- <!--button?-->                     <span class="input-group-text"><i class="fa fa-send"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-send"></i></span>
                                 </div>
                                 <input type="text" class="form-control" placeholder="Enter text here...">
                             </div>

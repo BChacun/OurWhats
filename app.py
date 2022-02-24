@@ -1,4 +1,5 @@
 import flask
+import sqlalchemy
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required, logout_user, LoginManager, login_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -46,7 +47,7 @@ def profile():
 def board():
     #db.drop_all()
     #db.create_all()
-    return render_template("board.html", user=current_user)
+    return render_template("board.html", user=current_user )
 
 
 
@@ -169,16 +170,16 @@ def msg_home():
 @app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
 @login_required
 def msg_view(discussion_id):
+    #faille de securité: on ne verifie pas que l'utilisateur fasse partue du groupe avant de l'afficher
 
     groups_list = models.Group.query.all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
 
     #test
-    #models.Message.send_message_to_user("test",current_user,current_user,1,"text")
+    #models.Message.send_message_to_group("test",current_user.id,current_group.id,None,"text")
 
     messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
     print(messages)
 
     return render_template('msg.html', messages=messages, discussion = current_group,
-                           discussions_list=groups_list, current_user=current_user)
-
+                           discussions_list=groups_list, current_user=current_user, models=models)

@@ -40,6 +40,15 @@ class User(UserMixin, db.Model):
         return self.avatar.format(
             digest, size)
 
+    def unread_messages_count(self):
+        return len(db.session.query(Message).join(Group).join(User).filter((User.id==self.id)&(Message.seen.any(id=self.id))).all())
+
+    def messages_sent_count(self, type):
+        return len(db.session.query(Message).filter((Message.sender_id==self.id) & (Message.msg_type==type)).all())
+
+    def messages_received_count(self):
+        return len(db.session.query(Message).join(Group).join(User).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all())
+
 
 seen_table = db.Table('seen_messages',
    db.Column('message_id', db.Integer, db.ForeignKey('messages.id')),
@@ -51,7 +60,7 @@ class Message(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     group_recipient_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     body = db.Column(db.String())
-    answer_to_id = db.Column(db.Integer(), db.ForeignKey('messages.id'), default=None)
+    answer_to_id = db.Column(db.Integer(), db.ForeignKey('messages.id'),nullable=True, default=None)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     msg_type = db.Column(db.String, default="text") #"text", "image", "file" or "removed"
     seen = db.relationship('User',secondary=seen_table)
