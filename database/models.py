@@ -109,6 +109,12 @@ class Group(db.Model):
                 return member
         return user
 
+    #returns the name of the group to display to the user passed in parameter
+    def get_name(self,current_user):
+        if self.members_count() <=2:
+            return self.get_other_user_first(current_user).username
+        return self.name
+
 
     @staticmethod
     def new_group(name, creator_id, avatar, members=None):
@@ -142,7 +148,7 @@ class Group(db.Model):
         db.session.add(self)
         db.session.commit()
 
-
+#returns a discussion with only the user the interlocutor if it exists in database, and returns None if it doesn't exist
 def get_existing_discussion_or_none(user, interlocutor):
     u_groups= user.groups
     i_groups= interlocutor.groups
