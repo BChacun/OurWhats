@@ -24,25 +24,28 @@
                             </div>
                             <input type="text" class="form-control" placeholder="Search...">
                         </div>
-                        <ul class="list-unstyled chat-list mt-2 mb-0">
+                            <ul class="list-unstyled chat-list mt-2 mb-0">
+
 
                             {% for group in discussions_list %}
-                                <a class="nav-link" href="{{ url_for('msg_view', discussion_id =group.id) }}">
-                                    <li class="clearfix">
+
+
+                                <li class="clearfix">
+                                    <a class="nav-link" href="{{ url_for('msg_view', discussion_id =group.id) }}">
                                         <img src={{ group.get_avatar(315,current_user) }} alt="avatar">
                                         <div class="about">
                                             <div class="name">{{ group.get_name(current_user) }} </div>
                                             <div class="status"> <i class="fa fa-circle offline"></i>
                                                 {% if group.members_count()==1 %}
-                                                    Last seen : {{ group.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
+                                                    {{ group.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
                                                 {% endif %}
                                             </div>
                                         </div>
-                                    </li></a>
+                                    </a>
+                                </li>
+
+
                             {% endfor %}
-
-
-
 
 
                         </ul>
