@@ -33,8 +33,8 @@
                                         <div class="about">
                                             <div class="name">{{ group.get_name(current_user) }} </div>
                                             <div class="status"> <i class="fa fa-circle offline"></i>
-                                                {% if discussion.members_count()==2 %}
-                                                    Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
+                                                {% if group.members_count()==1 %}
+                                                    Last seen : {{ group.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
                                                 {% endif %}
                                             </div>
                                         </div>
