@@ -85,13 +85,20 @@
                                         </li>
 
                                     {% else %}
+
                                         <li class="clearfix">
-                                            <div class="message-data text-right">
-                                                <span class="message-data-time">10:10 AM, Today</span>
-                                                <img src={{ discussion.get_avatar(64,current_user) }} alt="avatar">
+                                            <div class="row">
+                                            <div class="message-data">
+                                                <img class="float-right" src={{ discussion.get_avatar(64, models.User.query.filter_by(id=message.sender_id).first_or_404()) }} alt="avatar">
+                                                <span class="message-data-time float-end">10:10 AM, Today</span>
                                             </div>
+                                            </div>
+                                            <div class="row float-right">
                                             <div class="message other-message float-right">{{ message.body }}</div>
+                                            </div>
+
                                         </li>
+
 
                                     {% endif %}
 
