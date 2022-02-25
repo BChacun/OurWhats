@@ -79,7 +79,7 @@
                                     {% if message.sender_id == current_user.id %}
                                         <li class="clearfix">
                                             <div class="message-data">
-                                                <span class="message-data-time">10:12 AM, Today</span>
+                                                <span class="message-data-time">message.timestamp</span>
                                             </div>
                                             <div class="message my-message">{{ message.body }}</div>
                                         </li>
@@ -90,7 +90,7 @@
                                             <div class="row">
                                             <div class="message-data">
                                                 <img class="float-right" src={{ discussion.get_avatar(64, models.User.query.filter_by(id=message.sender_id).first_or_404()) }} alt="avatar">
-                                                <span class="message-data-time float-end">10:10 AM, Today</span>
+                                                <span class="message-data-time float-end">{{ message.timestamp.strftime('%Y-%m-%d-%H:%M:%S') }}</span>
                                             </div>
                                             </div>
                                             <div class="row float-right">
