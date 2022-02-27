@@ -170,7 +170,7 @@ def msg_home():
 @app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
 @login_required
 def msg_view(discussion_id):
-    #faille de securité: on ne verifie pas que l'utilisateur fasse partue du groupe avant de l'afficher
+    #faille de securité: on ne verifie pas que l'utilisateur fasse partie du groupe avant de l'afficher
 
     groups_list = models.Group.query.all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()

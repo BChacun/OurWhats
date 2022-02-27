@@ -82,7 +82,7 @@
                                     {% if message.sender_id == current_user.id %}
                                         <li class="clearfix">
                                             <div class="message-data">
-                                                <span class="message-data-time">message.timestamp</span>
+                                                <span class="message-data-time">{{ message.timestamp.strftime('%Y-%m-%d-%H:%M:%S') }}</span>
                                             </div>
                                             <div class="message my-message">{{ message.body }}</div>
                                         </li>
