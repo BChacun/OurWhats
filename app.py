@@ -167,7 +167,7 @@ def msg_home():
         discussion = models.Group.new_group("",current_user.id,current_user.avatar,[current_user])
     return msg_view(discussion.id)
 
-@app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
+@app.route('/msg/<discussion_id>')
 @login_required
 def msg_view(discussion_id):
     #faille de securité: on ne verifie pas que l'utilisateur fasse partie du groupe avant de l'afficher
@@ -183,4 +183,16 @@ def msg_view(discussion_id):
 
     return render_template('msg.html', messages=messages, discussion = current_group,
                            discussions_list=groups_list, current_user=current_user, models=models)
+
+
+@app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
+@login_required
+def send_msg(discussion_id):
+
+
+    app.logger.info("test")
+    models.Message.send_message_to_group(flask.request.form.get('body'),current_user.id,discussion_id,None,"text")
+    return msg_view(discussion_id)
+
+
 
