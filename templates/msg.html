@@ -117,21 +117,26 @@
                         </div>
                     </div>
                         <div class="chat-message clearfix">
+                            <form action="{{ url_for("send_msg", discussion_id =discussion.id)}}" method="post">
                             <div class="input-group mb-0">
 
-                                <div class="input-group-prepend">
 
-                                        <form action="{{ url_for("send_msg", discussion_id =discussion.id)}}" method="post">
 
+
+                                            <div class="input-group-prepend">
+                                                <input class="fa fa-send" type="submit">
+                                            </div>
                                             <input class="form-control" type="text" name="body" placeholder="Write Here Please">
-                                            <input class="fa fa-send" type="submit">
+
+
                                         </form>
                                     <!-- <span class="input-group-text"><i class="fa fa-send"></i></span> -->
 
-                                </div>
+
                                 <!-- <input type="text" class="form-control" placeholder="Enter text here..."> -->
 
                             </div>
+                            </form>
                         </div>
                     </div>
                 </div>
