@@ -28,29 +28,29 @@
         <div class="row row-group m-0">
             <div class="col-12 col-lg-6 col-xl-3 border-light">
                 <div class="card-body">
-                  <h5 class="text-white mb-0">9526 <span class="float-right"><i class="fa fa-shopping-cart"></i></span></h5>
+                  <h5 class="text-white mb-0">{{ user.messages_sent_count("text") }}  <span class="float-right"><i class="fa fa-shopping-cart"></i></span></h5>
                     <div class="progress my-3" style="height:3px;">
                        <div class="progress-bar" style="width:55%"></div>
                     </div>
-                  <p class="mb-0 text-white small-font">Message Sent <span class="float-right">+4.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                  <p class="mb-0 text-white small-font">Message Sent </p>
                 </div>
             </div>
             <div class="col-12 col-lg-6 col-xl-3 border-light">
                 <div class="card-body">
-                  <h5 class="text-white mb-0">8323 <span class="float-right"><i class="fa fa-usd"></i></span></h5>
+                  <h5 class="text-white mb-0">{{ user.messages_sent_count("image") + user.messages_sent_count("file") + user.messages_sent_count("removed")}} <span class="float-right"><i class="fa fa-usd"></i></span></h5>
                     <div class="progress my-3" style="height:3px;">
                        <div class="progress-bar" style="width:55%"></div>
                     </div>
-                  <p class="mb-0 text-white small-font">Images and Files sent <span class="float-right">+1.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                  <p class="mb-0 text-white small-font">Images and Files sent </p>
                 </div>
             </div>
             <div class="col-12 col-lg-6 col-xl-3 border-light">
                 <div class="card-body">
-                  <h5 class="text-white mb-0">6200 <span class="float-right"><i class="fa fa-eye"></i></span></h5>
+                  <h5 class="text-white mb-0">{{ user.messages_received_count() }} <span class="float-right"><i class="fa fa-eye"></i></span></h5>
                     <div class="progress my-3" style="height:3px;">
                        <div class="progress-bar" style="width:55%"></div>
                     </div>
-                  <p class="mb-0 text-white small-font">Messages and Files received <span class="float-right">+5.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                  <p class="mb-0 text-white small-font">Messages and Files received </p>
                 </div>
             </div>
             <div class="col-12 col-lg-6 col-xl-3 border-light">
