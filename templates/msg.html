@@ -35,8 +35,9 @@
                                         <img src={{ group.get_avatar(315,current_user) }} alt="avatar">
                                         <div class="about">
                                             <div class="name">{{ group.get_name(current_user) }} </div>
-                                            <div class="status"> <i class="fa fa-circle offline"></i>
+                                            <div class="status">
                                                 {% if group.members_count()==1 %}
+                                                    {{ group.members.pop().is_logged() | safe }}
                                                     {{ group.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
                                                 {% endif %}
                                             </div>

@@ -183,3 +183,4 @@ def msg_view(discussion_id):
 
     return render_template('msg.html', messages=messages, discussion = current_group,
                            discussions_list=groups_list, current_user=current_user, models=models)
+

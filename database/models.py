@@ -49,6 +49,11 @@ class User(UserMixin, db.Model):
     def messages_received_count(self):
         return len(db.session.query(Message).join(Group).join(User).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all())
 
+    def is_logged(self):
+        if (datetime.utcnow() - self.last_seen).total_seconds() < 300:
+            return '<i class="fa fa-circle online"></i>'
+        return '<i class="fa fa-circle offline"></i>'
+
 
 seen_table = db.Table('seen_messages',
    db.Column('message_id', db.Integer, db.ForeignKey('messages.id')),
