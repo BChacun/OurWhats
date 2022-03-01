@@ -178,11 +178,13 @@ def msg_view(discussion_id):
     #test
     #models.Message.send_message_to_group("test",current_user.id,current_group.id,None,"text")
 
-    messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
-    print(messages)
+    if (current_user in current_group.members):
 
-    return render_template('msg.html', messages=messages, discussion = current_group,
-                           discussions_list=groups_list, current_user=current_user, models=models)
+        messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
+        print(messages)
+
+        return render_template('msg.html', messages=messages, discussion = current_group,
+                               discussions_list=groups_list, current_user=current_user, models=models)
 
 
 @app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
