@@ -40,6 +40,7 @@
                                                     {{ group.members.pop().is_logged() | safe }}
                                                     {{ group.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
                                                 {% endif %}
+                                            <span class="glyphicon glyphicon-user"><mark>23</mark></span>
                                             </div>
                                         </div>
                                     </a>
@@ -61,9 +62,10 @@
                                     <div class="chat-about">
                                         <h6 class="m-b-0"> {{ discussion.get_name(current_user) }}</h6>
                                             <small>
-                                                {% if discussion.members_count()==2 %}
+                                                {% if discussion.members_count()==1 %}
                                                     Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
                                                 {% endif %}
+
                                             </small>
                                     </div>
                                 </div>

@@ -91,6 +91,8 @@ class Message(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def seen_by(self,user):
+        self.seen.append(user)
 
 
 members_table = db.Table('group_members',
@@ -105,6 +107,7 @@ class Group(db.Model):
     avatar = db.Column(db.String(), default='https://www.gravatar.com/avatar/{}?d=identicon&s={}') #source de l'image ou "" pour une conversation à 2
     creator_id = db.Column(db.Integer(),db.ForeignKey('user.id'))
     members = db.relationship('User', backref='groups' ,secondary=members_table)
+
 
     def get_avatar(self, size, current_user):
         if self.avatar=="":
@@ -161,6 +164,8 @@ class Group(db.Model):
         self.name=name
         db.session.add(self)
         db.session.commit()
+
+
 
 #returns a discussion with only the user the interlocutor if it exists in database, and returns None if it doesn't exist
 def get_existing_discussion_or_none(user, interlocutor):

@@ -181,7 +181,9 @@ def msg_view(discussion_id):
     if (current_user in current_group.members or current_group.members_count()==1):
 
         messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
-        print(messages)
+
+        for message in messages:
+            message.seen_by(current_user)
 
         return render_template('msg.html', messages=messages, discussion = current_group,
                                discussions_list=groups_list, current_user=current_user, models=models)
