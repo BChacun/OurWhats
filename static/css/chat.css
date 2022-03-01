@@ -254,3 +254,12 @@ body{
         overflow-x: auto
     }
 }
+
+.scroller {
+
+  overflow-y: scroll;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+}
+
+
