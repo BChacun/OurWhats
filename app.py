@@ -178,7 +178,7 @@ def msg_view(discussion_id):
     #test
     #models.Message.send_message_to_group("test",current_user.id,current_group.id,None,"text")
 
-    if (current_user in current_group.members):
+    if (current_user in current_group.members or current_group.members_count()==1):
 
         messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
         print(messages)
