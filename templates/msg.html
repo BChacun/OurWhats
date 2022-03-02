@@ -37,8 +37,9 @@
                                             <div class="name">{{ group.get_name(current_user) }} </div>
                                             <div class="status">
                                                 {% if group.members_count()==1 %}
-                                                    {{ group.members.pop().is_logged() | safe }}
-                                                    {{ group.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
+                                                    {% set targetted_user = group.members.pop() %}
+                                                    {{ targetted_user.is_logged() | safe }}
+                                                    {{ targetted_user.last_seen.strftime('%Y-%m-%d')}}
                                                 {% endif %}
                                             <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
                                             </div>
