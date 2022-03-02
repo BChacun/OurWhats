@@ -126,6 +126,11 @@ class Group(db.Model):
                 return member
         return user
 
+    def count_not_seen_msg(self,user):
+        return Group.query.join(Message,  Group.id == Message.group_recipient_id).filter_by(group_recipient_id= self.id).count() - \
+               Group.query.join(Message, Group.id == Message.group_recipient_id).filter_by(group_recipient_id= self.id).where(Group.members.contains(user)).count()
+
+
     #returns the name of the group to display to the user passed in parameter
     def get_name(self,current_user):
         if self.members_count() <=2:
