@@ -164,7 +164,7 @@ def edit_profile():
 def msg_home():
     discussion = models.Group.query.filter(models.Group.members.any(id=current_user.id)).first()
     if discussion is None:
-        discussion = models.Group.new_group("",current_user.id,current_user.avatar,[current_user])
+        discussion = models.Group.new_group(current_user.username,current_user.id,current_user.avatar,[current_user])
     return msg_view(discussion.id)
 
 @app.route('/msg/<discussion_id>')
@@ -172,27 +172,31 @@ def msg_home():
 def msg_view(discussion_id):
     #faille de securité: on ne verifie pas que l'utilisateur fasse partie du groupe avant de l'afficher
 
-    groups_list = models.Group.query.all()
+    groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
 
     #test
     #models.Message.send_message_to_group("test",current_user.id,current_group.id,None,"text")
 
-    if (current_user in current_group.members or current_group.members_count()==1):
 
-        messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
 
-        for message in messages:
-            message.seen_by(current_user)
+    messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
 
-        return render_template('msg.html', messages=messages, discussion = current_group,
-                               discussions_list=groups_list, current_user=current_user, models=models)
+    for message in messages:
+        message.seen_by(current_user)
+
+    return render_template('msg.html', messages=messages, discussion = current_group,
+                            discussions_list=groups_list, current_user=current_user, models=models)
+
+
 
 
 @app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
 @login_required
 def send_msg(discussion_id):
 
+
+    app.logger.info("test")
     models.Message.send_message_to_group(flask.request.form.get('body'),current_user.id,discussion_id,None,"text")
     return msg_view(discussion_id)
 

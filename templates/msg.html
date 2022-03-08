@@ -34,15 +34,24 @@
                                     <a class="nav-link" href="{{ url_for('msg_view', discussion_id =group.id) }}">
                                         <img src={{ group.get_avatar(315,current_user) }} alt="avatar">
                                         <div class="about">
+
+                                        {% if group.members_count()==1 %}
                                             <div class="name">{{ group.get_name(current_user) }} </div>
                                             <div class="status">
-                                                {% if group.members_count()==1 %}
+
                                                     {% set targetted_user = group.members.pop() %}
                                                     {{ targetted_user.is_logged() | safe }}
                                                     {{ targetted_user.last_seen.strftime('%Y-%m-%d')}}
-                                                {% endif %}
                                             <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
                                             </div>
+                                        {% else %}
+                                                <div class="name">{{ group.name }} </div>
+                                                <div class="status">
+
+                                                 <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
+                                            </div>
+                                        {% endif %}
+
                                         </div>
                                     </a>
                                 </li>
@@ -71,11 +80,14 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6 hidden-sm text-right">
-                                    <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
+                                    <!--<a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
                                     <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
                                     <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>-->
+                                    <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-plus"></i></a>
                                 </div>
+
+
                             </div>
                         </div>
                     <div class="scroller" style = "max-height: 60vh;">
