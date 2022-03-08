@@ -8,7 +8,7 @@ from database.database import db, init_database
 import database.models as models
 from config.config import Config
 from datetime import datetime
-from database.form import EditProfileForm
+from database.form import EditProfileForm, NewGroupForm
 
 app = flask.Flask(__name__)
 app.config.from_object(Config)
@@ -199,6 +199,21 @@ def send_msg(discussion_id):
     app.logger.info("test")
     models.Message.send_message_to_group(flask.request.form.get('body'),current_user.id,discussion_id,None,"text")
     return msg_view(discussion_id)
+
+
+@app.route('/new_group', methods=['GET', 'POST'])
+@login_required
+def new_group():
+    form = NewGroupForm()
+    if form.validate_on_submit() :
+        current_group = models.Group.new_group(form.name.data,current_user.id,current_user.avatar,[current_user])
+        flash('New Group created !')
+        return msg_view(current_group.id)
+
+    elif request.method == 'GET':
+
+        return render_template('new_group.html', title='New Group',form=form)
+
 
 
 

@@ -32,3 +32,11 @@ class EditProfileForm(FlaskForm):
             if user is not None:
                 raise ValidationError('Please use a different username.')
 
+
+
+
+class NewGroupForm(FlaskForm):
+    name = StringField('name', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
