@@ -44,6 +44,18 @@
                                                     {{ targetted_user.last_seen.strftime('%Y-%m-%d')}}
                                             <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
                                             </div>
+
+                                        {% elif group.members_count()==2 %}
+
+                                            <div class="name">{{ group.get_name(current_user) }} </div>
+                                            <div class="status">
+
+                                                    {% set targetted_user = group.members.get_other_user_first(self,current_user) %}
+                                                    {{ targetted_user.is_logged() | safe }}
+                                                    {{ targetted_user.last_seen.strftime('%Y-%m-%d')}}
+                                            <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
+                                            </div>
+
                                         {% else %}
                                                 <div class="name">{{ group.name }} </div>
                                                 <div class="status">
