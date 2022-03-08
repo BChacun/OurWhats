@@ -8,7 +8,7 @@
 
     <head>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/board.css') }}">
+
     </head>
 
     <div>
@@ -19,50 +19,40 @@
         {% set received_messages_count, received_messages_size = user.messages_received() %}
         <p>You have {{ unr }} unread message{% if unr>1 %}s{% endif %}</p>
     </div>
-    <div>
-        <p>{{ sent_text_count }} messages sent / {{ sent_text_size }}</p>
-        <p>{{ sent_other_count }} images and files sent / {{ sent_other_size }}</p>
-        <p>{{ received_messages_count }} messages and files received / {{ received_messages_size }}</p>
-    </div>
 
 
-    <div class="card mt-3">
-        <div class="card-content">
-            <div class="row row-group m-0">
-                <div class="col-12 col-lg-6 col-xl-3 border-light">
-                    <div class="card-body">
-                        <h5 class="text-white mb-0">{{ sent_text_count }}  <span class="float-right"><i class="fa fa-shopping-cart"></i></span></h5>
-                        <div class="progress my-3" style="height:3px;">
-                            <div class="progress-bar" style="width:55%"></div>
-                        </div>
-                        <p class="mb-0 text-white small-font">Message Sent </p>
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/board.css') }}">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-xl-3">
+                <div class="card bg-c-blue order-card">
+                    <div class="card-block">
+                        <h6 class="m-b-20">Messages sent: </h6>
+                        <h2 class="text-right"><i class="fa fa-send f-left"></i><span>&nbsp;{{ sent_text_count }}</span></h2>
+                        <p class="m-b-0">Size on server: <span class="f-right">{{ sent_text_size }}</span></p>
                     </div>
                 </div>
-                <div class="col-12 col-lg-6 col-xl-3 border-light">
-                    <div class="card-body">
-                        <h5 class="text-white mb-0">{{ sent_other_count}} <span class="float-right"><i class="fa fa-usd"></i></span></h5>
-                        <div class="progress my-3" style="height:3px;">
-                            <div class="progress-bar" style="width:55%"></div>
-                        </div>
-                        <p class="mb-0 text-white small-font">Images and Files sent </p>
+            </div>
+
+            <div class="col-md-4 col-xl-3">
+                <div class="card bg-c-green order-card">
+                    <div class="card-block">
+                        <h6 class="m-b-20">Images and files sent: </h6>
+                        <h2 class="text-right"><i class="fa fa-files-o f-left"></i><span>&nbsp;{{ sent_other_count }}</span></h2>
+                        <p class="m-b-0">Size on server:<span class="f-right">{{ sent_other_size }}</span></p>
                     </div>
                 </div>
-                <div class="col-12 col-lg-6 col-xl-3 border-light">
-                    <div class="card-body">
-                        <h5 class="text-white mb-0">{{ received_messages_count }} <span class="float-right"><i class="fa fa-eye"></i></span></h5>
-                        <div class="progress my-3" style="height:3px;">
-                            <div class="progress-bar" style="width:55%"></div>
-                        </div>
-                        <p class="mb-0 text-white small-font">Messages and Files received </p>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-6 col-xl-3 border-light">
-                    <div class="card-body">
-                        <h5 class="text-white mb-0">5630 <span class="float-right"><i class="fa fa-envira"></i></span></h5>
-                        <div class="progress my-3" style="height:3px;">
-                            <div class="progress-bar" style="width:55%"></div>
-                        </div>
-                        <p class="mb-0 text-white small-font"> ??? <span class="float-right">+2.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+            </div>
+
+            <div class="col-md-4 col-xl-3">
+                <div class="card bg-c-yellow order-card">
+                    <div class="card-block">
+                        <h6 class="m-b-20">Messages and files received:</h6>
+                        <h2 class="text-right"><i class="fa fa-download f-left"></i><span>&nbsp;{{ received_messages_count }}</span></h2>
+                        <p class="m-b-0">Size on server:<span class="f-right">{{ received_messages_size }}</span></p>
                     </div>
                 </div>
             </div>

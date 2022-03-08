@@ -1,65 +1,50 @@
-/*Cards */
-.card{
-   margin-bottom: 25px;
-   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-   border: none;
-   background-color: rgba(0,0,0,.2);
+body{
+    margin-top:20px;
+    background:#FAFAFA;
+}
+.order-card {
+    color: #fff;
 }
 
-.card-header {
-    padding: .75rem 1.25rem;
-    margin-bottom: 0;
-    background: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    font-weight: 600;
-	 font-size: 14px;
-	 color: #ffffff;
+.bg-c-blue {
+    background: linear-gradient(45deg,#4099ff,#73b4ff);
 }
 
-.card-title {
-	margin-bottom: .75rem;
-	font-weight: 600;
-	font-size: 16px;
-	color:#ffffff;
+.bg-c-green {
+    background: linear-gradient(45deg,#2ed8b6,#59e0c5);
 }
 
-.card-action{
-	float: right
+.bg-c-yellow {
+    background: linear-gradient(45deg,#FFB64D,#ffcb80);
 }
 
-.card-action a i{
-	  color: #ffffff;
-    border-radius: 50%;
+.bg-c-pink {
+    background: linear-gradient(45deg,#FF5370,#ff869a);
 }
 
-.card-footer {
-    padding: .75rem 1.25rem;
-    background-color: rgba(0, 0, 0, 0);
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+
+.card {
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4,26,55,0.16);
+    box-shadow: 0 1px 2.94px 0.06px rgba(4,26,55,0.16);
+    border: none;
+    margin-bottom: 30px;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 }
 
-.card-deck {
-    margin-bottom: 25px;
+.card .card-block {
+    padding: 25px;
 }
 
-@media (min-width: 576px){
-
-.card-deck {
-    margin-right: -12.5px;
-    margin-left: -12.5px;
+.order-card i {
+    font-size: 26px;
 }
 
-.card-deck .card {
-    margin-right: 12.5px;
-    margin-left: 12.5px;
- }
+.f-left {
+    float: left;
 }
 
-.card-group {
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-	margin-bottom: 25px;
+.f-right {
+    float: right;
 }
-.card-group .card {
-	box-shadow: none;
-}
-
