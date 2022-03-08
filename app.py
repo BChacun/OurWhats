@@ -34,7 +34,9 @@ with app.test_request_context():
 def home():
     #db.drop_all()
     #db.create_all()
-    return render_template("index.html")
+    if current_user.is_authenticated:
+        return msg_home()
+    return login()
 
 
 @app.route('/profile')
@@ -105,7 +107,7 @@ def login():
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)
     posts = []
-    return render_template("success_account_creation.html")
+    return msg_home()
 
 
 @app.route("/logout", methods=["GET"])
@@ -113,7 +115,7 @@ def login():
 def logout():
     """Logout the current user."""
     logout_user()
-    return render_template("index.html")
+    return login()
 
 
 @app.route('/users')
