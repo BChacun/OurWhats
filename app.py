@@ -193,8 +193,6 @@ def msg_view(discussion_id):
 @login_required
 def send_msg(discussion_id):
 
-
-    app.logger.info("test")
     models.Message.send_message_to_group(flask.request.form.get('body'),current_user.id,discussion_id,None,"text")
     return msg_view(discussion_id)
 

@@ -1,3 +1,6 @@
+import sys
+
+import sqlalchemy
 from flask_login import UserMixin
 from hashlib import md5
 from database.database import db
@@ -41,13 +44,46 @@ class User(UserMixin, db.Model):
             digest, size)
 
     def unread_messages_count(self):
-        return len(db.session.query(Message).join(Group).join(User).filter((User.id==self.id)&(Message.seen.any(id=self.id))).all())
+        return len(db.session.query(Message).join(Group).join(User).filter((User.id==self.id) & (sqlalchemy.not_(Message.seen.any(id=self.id)))).all())
 
-    def messages_sent_count(self, type):
-        return len(db.session.query(Message).filter((Message.sender_id==self.id) & (Message.msg_type==type)).all())
+    def unread_messages(self):
+        size=0
+        query=db.session.query(Message).join(Group).join(User).filter((User.id == self.id) & (Message.seen.any(id=self.id))).all()
+        for message in query:
+            size+=sys.getsizeof(message)
+        return len(query), size_with_unit(size)
 
-    def messages_received_count(self):
-        return len(db.session.query(Message).join(Group).join(User).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all())
+
+    def messages_sent(self, type):
+        size = 0
+        query = db.session.query(Message).filter((Message.sender_id==self.id) & (Message.msg_type==type)).all()
+        for message in query:
+            size += sys.getsizeof(message)
+        return len(query), size_with_unit(size)
+
+    def message_sent_notext(self):
+        size_image = 0
+        query_image = db.session.query(Message).filter((Message.sender_id == self.id) & (Message.msg_type == "image")).all()
+        for message in query_image:
+            size_image += sys.getsizeof(message)
+        size_file = 0
+        query_file = db.session.query(Message).filter(
+            (Message.sender_id == self.id) & (Message.msg_type == "file")).all()
+        for message in query_file:
+            size_file += sys.getsizeof(message)
+        size_removed = 0
+        query_removed = db.session.query(Message).filter(
+            (Message.sender_id == self.id) & (Message.msg_type == "removed")).all()
+        for message in query_removed:
+            size_removed += sys.getsizeof(message)
+        return len(query_image)+len(query_file)+len(query_removed), size_with_unit(size_image+size_file+size_removed)
+
+    def messages_received(self):
+        size = 0       #la taille en octets
+        query=db.session.query(Message).join(Group).join(User).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all()
+        for message in query:
+            size += sys.getsizeof(message)
+        return len(query), size_with_unit(size)
 
     def is_logged(self):
         if (datetime.utcnow() - self.last_seen).total_seconds() < 300:
@@ -93,6 +129,8 @@ class Message(db.Model):
 
     def seen_by(self,user):
         self.seen.append(user)
+        db.session.add(self)
+        db.session.commit()
 
 
 members_table = db.Table('group_members',
@@ -184,3 +222,14 @@ def get_existing_discussion_or_none(user, interlocutor):
             if (group in i_groups) & (group.members_count()==1):
                 return group
     return None
+
+def size_with_unit(size):
+    if size<1024:
+        return str(size)+" bytes"
+    if size<1024**2:
+        return str(size)+" MB"
+    if size<1024**3:
+        return str(size)+" GB"
+    if size<1024**4:
+        return str(size)+" TB"
+    #on devrait être assez large avec ça mais en théorie il faudrait un else
