@@ -13,13 +13,16 @@
         {% set sent_text_count, sent_text_size = user.messages_sent("text") %}
         {% set sent_other_count, sent_other_size = user.messages_sent("image") %}
         {% set received_messages_count, received_messages_size = user.messages_received() %}
-        <p>You have {{ unr }} unread message{% if unr>1 %}s{% endif %}</p>
     </div>
 
 
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/board.css') }}">
+
+    <div class="alert alert-{% if unr>0 %}warning{% else %}info{% endif %}">
+        You have {{ unr }} unread message{% if unr>1 %}s{% endif %}
+    </div>
 
     <div class="container">
         <div class="row">
