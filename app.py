@@ -15,7 +15,6 @@ from database.form import EditProfileForm, NewGroupForm
 from flask_wtf import Form
 from werkzeug.utils import secure_filename
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from flask_wtf.csrf import CSRFProtect
 import os
 
 app = flask.Flask('__name__', template_folder="./templates/")
@@ -26,10 +25,7 @@ login_manager.login_view = 'login'
 login_manager.init_app(app)
 migrate = Migrate(app, db)
 
-#csrf = CSRFProtect()
-app.config['SECRET_KEY'] = '325245hkhf486axcv5719bf9397cbn69xv'
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max-limit.
-#csrf.init_app(app)
+
 
 @login_manager.user_loader
 def load_user(user):
@@ -217,14 +213,17 @@ def send_msg(discussion_id):
         os.path.dirname(app.instance_path), 'assets'
     )
     f = form.image.data
+    id = models.Message.send_message_to_group(flask.request.form.get('body'), current_user.id, discussion_id, None,
+                                              "text")
     if f is not None:
         filename = secure_filename(f.filename)
+        name=str(id)+"."+filename.split(".",1)[1]
 
-        f.save(os.path.join(assets_dir, str(current_user.id), filename))
+        f.save(os.path.join(assets_dir, str(current_user.id), name))
 
         print('Document uploaded successfully.')
 
-    models.Message.send_message_to_group(flask.request.form.get('body'),current_user.id,discussion_id,None,"text")
+
     return msg_view(discussion_id)
 
 

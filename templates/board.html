@@ -11,7 +11,7 @@
         <h3 >Hello {{ user.username }}!</h3>
         {% set unr=user.unread_messages_count() %}
         {% set sent_text_count, sent_text_size = user.messages_sent("text") %}
-        {% set sent_other_count, sent_other_size = user.messages_sent("image") %}
+        {% set sent_other_count, sent_other_size = user.files_sent() %}
         {% set received_messages_count, received_messages_size = user.messages_received() %}
     </div>
 

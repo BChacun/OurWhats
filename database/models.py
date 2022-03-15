@@ -1,3 +1,4 @@
+import os
 import sys
 
 import sqlalchemy
@@ -61,29 +62,36 @@ class User(UserMixin, db.Model):
             size += sys.getsizeof(message)
         return len(query), size_with_unit(size)
 
-    def message_sent_notext(self):
-        size_image = 0
-        query_image = db.session.query(Message).filter((Message.sender_id == self.id) & (Message.msg_type == "image")).all()
-        for message in query_image:
-            size_image += sys.getsizeof(message)
-        size_file = 0
-        query_file = db.session.query(Message).filter(
-            (Message.sender_id == self.id) & (Message.msg_type == "file")).all()
-        for message in query_file:
-            size_file += sys.getsizeof(message)
-        size_removed = 0
-        query_removed = db.session.query(Message).filter(
-            (Message.sender_id == self.id) & (Message.msg_type == "removed")).all()
-        for message in query_removed:
-            size_removed += sys.getsizeof(message)
-        return len(query_image)+len(query_file)+len(query_removed), size_with_unit(size_image+size_file+size_removed)
+    def files_sent(self):
+        count=0
+        size=0
+        dir_path="./assets/"+str(self.id)
+        for path in os.scandir(dir_path):
+            # check if current path is a file
+            if path.is_file():
+                count += 1
+                size+=os.path.getsize(path)
+        return count, size_with_unit(size)
 
     def messages_received(self):
         size = 0       #la taille en octets
+        fcount , fsize = self.files_received()
         query=db.session.query(Message).join(Group).join(User).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all()
         for message in query:
             size += sys.getsizeof(message)
-        return len(query), size_with_unit(size)
+        return len(query)+fcount, size_with_unit(size+fsize)
+
+    def files_received(self):
+        count=0
+        size=0
+        query=db.session.query(Message).join(Group).join(User).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all()
+        for message in query:
+            dir_path = "./assets/" + str(message.sender_id)
+            for path in os.listdir(dir_path):
+                if os.path.isfile(os.path.join(dir_path, path)) & (os.path.basename(path).split(".", 1)[0] == str(message.sender_id)):
+                    count+=1
+                    size+=os.path.getsize(path)
+        return count,size
 
     def is_logged(self):
         if (datetime.utcnow() - self.last_seen).total_seconds() < 300:
@@ -103,7 +111,7 @@ class Message(db.Model):
     body = db.Column(db.String())
     answer_to_id = db.Column(db.Integer(), db.ForeignKey('messages.id'),nullable=True, default=None)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    msg_type = db.Column(db.String, default="text") #"text", "image", "file" or "removed"
+    msg_type = db.Column(db.String, default="text") #"text" or "removed"
     seen = db.relationship('User',secondary=seen_table)
 
     @staticmethod
@@ -111,6 +119,7 @@ class Message(db.Model):
         msg = Message(sender_id=sender_id, group_recipient_id=group_recipient_id, body=body, answer_to_id=answer_to_id,msg_type=msg_type)
         db.session.add(msg)
         db.session.commit()
+        return msg.id
 
     @staticmethod
     def send_message_to_user(body, sender, user_recipient, answer_to_id, msg_type):
@@ -123,7 +132,7 @@ class Message(db.Model):
     def remove_msg(self):
         self.msg_type="removed"
         self.body=""
-        self.answerTo_id=None
+        self.answer_to_id=None
         db.session.add(self)
         db.session.commit()
 
@@ -227,9 +236,9 @@ def size_with_unit(size):
     if size<1024:
         return str(size)+" bytes"
     if size<1024**2:
-        return str(size)+" MB"
+        return str(round(size/1024,2))+" MB"
     if size<1024**3:
-        return str(size)+" GB"
+        return str(round(size/1024**2,2))+" GB"
     if size<1024**4:
-        return str(size)+" TB"
+        return str(round(size/1024**3,2))+" TB"
     #on devrait être assez large avec ça mais en théorie il faudrait un else
