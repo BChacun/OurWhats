@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+    </head>
+
+    <h1>Group Settings</h1>
+
+
+    <!-- GRID MEMBERS -->
+    <h4>Group Members</h4>
+    <ul class="list-group">
+    {% for member in group.members %}
+      <li class="list-group-item">{{ member.username }}
+       <a href="{{ url_for('delete_user', user_id =member.id, group_id = group.id) }}" class="btn btn-outline-primary float-right"><i class="fa fa-minus"></i></a>
+      </li>
+
+    {% endfor %}
+    </ul>
+
+    <!-- ADD MEMBERS -->
+    <h4>Add Members</h4>
+    <form action="" method="post">
+    {{ form_addmember.hidden_tag() }}
+        <p>
+
+
+            {{ form_addmember.username(size=32) }}<br>
+            {% for error in form_addmember.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form_addmember.submit() }}</p>
+    </form>
+
+    <!-- CHANGE NAME -->
+    <h4>Group Name</h4>
+    <form action="" method="post">
+        {{ form_changename.hidden_tag() }}
+        <p>
+
+
+            {{ form_changename.name(size=32) }}<br>
+            {% for error in form_changename.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form_changename.submit() }}</p>
+    </form>
+
+
+{% endblock %}

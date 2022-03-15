@@ -51,7 +51,7 @@
                                                     <div class="name">{{ group.get_name(current_user) }} </div>
                                                     <div class="status">
 
-                                                        {% set targetted_user = group.members.get_other_user_first(self,current_user) %}
+                                                        {% set targetted_user = group.get_other_user_first(current_user) %}
                                                         {{ targetted_user.is_logged() | safe }}
                                                         {{ targetted_user.last_seen.strftime('%Y-%m-%d')}}
                                                         <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
@@ -68,15 +68,20 @@
                                             </div>
                                         </a>
                                         <div class = "float-right">
-                                            <a href="{{ url_for('new_group') }}" class="btn btn-outline-primary"><i class="fa fa-cog"></i></a>
+                                            <a href="{{ url_for('group_settings', group_id=group.id) }}" class="btn btn-outline-primary"><i class="fa fa-cog"></i></a>
                                         </div>
                                     </li>
 
 
                                 {% endfor %}
 
-
                             </ul>
+
+                        <div class="text-center">
+                        <a href="{{ url_for('new_group') }}" class="btn btn-outline-primary"><i class="fa fa-plus"></i></a>
+                        </div>
+
+
                         </div>
                         <div class="chat">
                             <div class="chat-header clearfix">
@@ -89,7 +94,7 @@
                                             <h6 class="m-b-0"> {{ discussion.get_name(current_user) }}</h6>
                                             <small>
                                                 {% if discussion.members_count()==1 %}
-                                                    Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
+                                                    Last seen : {{ discussion.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
                                                 {% endif %}
 
                                             </small>
@@ -100,7 +105,13 @@
                                         <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
                                         <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
                                         <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>-->
-                                        <a href="{{ url_for('new_group') }}" class="btn btn-outline-primary"><i class="fa fa-plus"></i></a>
+                                        <form action="{{ url_for("send_msg", discussion_id =discussion.id)}}" method="post">
+
+
+
+
+                                           <input class="form-control" id="form-search-msg"   type="text" name="form-search-msg-body" placeholder="Search Here Please">
+                                        </form>
                                     </div>
 
 
@@ -163,7 +174,7 @@
 
 
                                         </div>
-                                        <input class="form-control" type="text" name="body" placeholder="Write Here Please">
+                                        <input class="form-control" id="form-send-msg" type="text" name="form-send-msg-body" placeholder="Write Here Please">
 
 
 

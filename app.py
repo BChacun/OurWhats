@@ -9,8 +9,8 @@ from flask_migrate import Migrate
 from database.database import db, init_database
 import database.models as models
 from config.config import Config
-from datetime import datetime
-from database.form import EditProfileForm, NewGroupForm
+from datetime import datetime,timedelta
+from database.form import EditProfileForm, NewGroupForm, GroupSettingsForm_ChangeName, GroupSettingsForm_AddMember
 
 from flask_wtf import Form
 from werkzeug.utils import secure_filename
@@ -148,7 +148,7 @@ def user(username):
 def before_request():
 
     if current_user.is_authenticated:
-        current_user.last_seen = datetime.utcnow()
+        current_user.last_seen = datetime.utcnow() + timedelta(hours=1)
         db.session.commit()
 
 
@@ -189,7 +189,7 @@ class DocumentUploadForm(Form):
 @app.route('/msg/<discussion_id>')
 @login_required
 def msg_view(discussion_id):
-    #faille de securité: on ne verifie pas que l'utilisateur fasse partie du groupe avant de l'afficher
+
 
     groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
@@ -223,8 +223,29 @@ def send_msg(discussion_id):
 
         print('Document uploaded successfully.')
 
+    if "form-send-msg-body" in request.form:
+
+        app.logger.info("test")
+        models.Message.send_message_to_group(flask.request.form.get('form-send-msg-body'),current_user.id,discussion_id,None,"text")
+        return msg_view(discussion_id)
+
+    if "form-search-msg-body" in request.form:
+        groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
+        current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
+
+        messages = models.Message.query.filter_by(group_recipient_id=current_group.id).filter(
+            models.Message.body.contains(flask.request.form.get('form-search-msg-body'))).all()
+
+        for message in messages:
+            message.seen_by(current_user)
+
+        return render_template('msg.html', messages=messages, discussion=current_group,
+                               discussions_list=groups_list, current_user=current_user, models=models)
 
     return msg_view(discussion_id)
+
+
+
 
 
 @app.route('/new_group', methods=['GET', 'POST'])
@@ -239,6 +260,42 @@ def new_group():
     elif request.method == 'GET':
 
         return render_template('new_group.html', title='New Group',form=form)
+
+@app.route('/group_settings/<group_id>', methods=['GET', 'POST'])
+@login_required
+def group_settings(group_id):
+    form_changename = GroupSettingsForm_ChangeName()
+    form_addmember = GroupSettingsForm_AddMember()
+
+    current_group = models.Group.query.filter_by(id=group_id).first()
+
+
+
+    if form_changename.validate_on_submit() :
+        current_group.name = form_changename.name.data
+        flash('Name Changed !')
+        return render_template('group_settings.html', title='Group Settings',group = current_group,form_changename=form_changename, form_addmember=form_addmember)
+
+
+    if form_addmember.validate_on_submit() :
+        new_member_id = models.User.query.filter_by(username=form_addmember.username.data).first()
+        current_group.add_member(new_member_id)
+        flash(form_addmember.username.data + ' Changed !')
+        return render_template('group_settings.html', title='Group Settings',group = current_group,form_changename=form_changename, form_addmember=form_addmember)
+
+
+
+    elif request.method == 'GET':
+        return render_template('group_settings.html', title='Group Settings', group = current_group,form_changename=form_changename, form_addmember=form_addmember)
+
+
+@app.route('/group_settings/deleting_user/<group_id>/<user_id>', methods=['GET', 'POST'])
+@login_required
+def delete_user(user_id,group_id):
+    current_group = models.Group.query.filter_by(id=group_id).first()
+    act_user = models.User.query.filter_by(id=user_id).first()
+    current_group.remove_member(act_user)
+    return group_settings(group_id)
 
 
 
