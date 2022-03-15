@@ -244,5 +244,14 @@ def group_settings(group_id):
         return render_template('group_settings.html', title='Group Settings', group = current_group,form_changename=form_changename, form_addmember=form_addmember)
 
 
+@app.route('/group_settings/deleting_user/<group_id>/<user_id>', methods=['GET', 'POST'])
+@login_required
+def delete_user(user_id,group_id):
+    current_group = models.Group.query.filter_by(id=group_id).first()
+    act_user = models.User.query.filter_by(id=user_id).first()
+    current_group.remove_member(act_user)
+    return group_settings(group_id)
+
+
 
 
