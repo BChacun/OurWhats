@@ -1,16 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/members.scss') }}">
+    </head>
     <h1>Group Settings</h1>
+
+
+    <!-- GRID MEMBERS -->
+    <h4>Group Members</h4>
+    <ul class="list-group">
+    {% for member in group.members %}
+      <li class="list-group-item">{{ member.username }}</li>
+    {% endfor %}
+    </ul>
+
+
+    <!-- CHANGE NAME -->
     <form action="" method="post">
-        {{ form.hidden_tag() }}
+        {{ form_changename.hidden_tag() }}
         <p>
-            {{ form.name.label }}<br>
-            {{ form.name(size=32) }}<br>
-            {% for error in form.name.errors %}
+        <h4>Group Name</h4>
+
+            {{ form_changename.name(size=32) }}<br>
+            {% for error in form_changename.name.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <p>{{ form.submit() }}</p>
+        <p>{{ form_changename.submit() }}</p>
     </form>
+
+
 {% endblock %}

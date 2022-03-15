@@ -8,7 +8,7 @@ from database.database import db, init_database
 import database.models as models
 from config.config import Config
 from datetime import datetime
-from database.form import EditProfileForm, NewGroupForm
+from database.form import EditProfileForm, NewGroupForm, GroupSettingsForm_ChangeName
 
 app = flask.Flask(__name__)
 app.config.from_object(Config)
@@ -219,14 +219,17 @@ def new_group():
 @app.route('/group_settings/<group_id>', methods=['GET', 'POST'])
 @login_required
 def group_settings(group_id):
-    form = NewGroupForm()
-    if form.validate_on_submit() :
-        current_group = models.Group.new_group(form.name.data,current_user.id,current_user.avatar,[current_user])
-        flash('New Group created !')
-        return msg_view(current_group.id)
+    form_changename = GroupSettingsForm_ChangeName()
+    current_group = models.Group.query.filter_by(id=group_id).first()
+    if form_changename.validate_on_submit() :
+        current_group.name = form_changename.name.data
+        flash('Name Changed !')
+        return render_template('group_settings.html', title='Group Settings',group = current_group,form_changename=form_changename)
 
     elif request.method == 'GET':
 
-        return render_template('group_settings.html', title='Group Settings',form=form)
+        return render_template('group_settings.html', title='Group Settings', group = current_group,form_changename=form_changename)
+
+
 
 
