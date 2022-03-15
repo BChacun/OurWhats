@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from database.database import db, init_database
 import database.models as models
 from config.config import Config
-from datetime import datetime
+from datetime import datetime,timedelta
 from database.form import EditProfileForm, NewGroupForm, GroupSettingsForm_ChangeName, GroupSettingsForm_AddMember
 
 app = flask.Flask(__name__)
@@ -139,7 +139,7 @@ def user(username):
 def before_request():
 
     if current_user.is_authenticated:
-        current_user.last_seen = datetime.utcnow()
+        current_user.last_seen = datetime.utcnow() + timedelta(hours=1)
         db.session.commit()
 
 
