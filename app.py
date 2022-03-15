@@ -211,18 +211,20 @@ def send_msg(discussion_id):
 
     if "form-send-msg-body" in request.form:
 
-        msg_id=models.Message.send_message_to_group(flask.request.form.get('form-send-msg-body'),current_user.id,discussion_id,None,"text")
         form = DocumentUploadForm()
         assets_dir = os.path.join(os.path.dirname(app.instance_path), 'assets')
         f = form.image.data
 
-        if f is not None:
-            filename = str(msg_id) + "." + secure_filename(f.filename).split(".", 1)[1]
+        if flask.request.form.get('form-send-msg-body') is not "" or f is not None:
+            msg_id=models.Message.send_message_to_group(flask.request.form.get('form-send-msg-body'),current_user.id,discussion_id,None,"text")
 
-            f.save(os.path.join(assets_dir, str(current_user.id),
+            if f is not None:
+                filename = str(msg_id) + "." + secure_filename(f.filename).split(".", 1)[1]
+
+                f.save(os.path.join(assets_dir, str(current_user.id),
                                 filename))  # saves the file in the folder that is named current_user.id
 
-            print('Document uploaded successfully.')
+                print('Document uploaded successfully.')
         return msg_view(discussion_id)
 
 

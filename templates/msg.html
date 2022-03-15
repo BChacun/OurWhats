@@ -77,9 +77,9 @@
 
                             </ul>
 
-                        <div class="text-center">
-                        <a href="{{ url_for('new_group') }}" class="btn btn-outline-primary"><i class="fa fa-plus"></i></a>
-                        </div>
+                            <div class="text-center">
+                                <a href="{{ url_for('new_group') }}" class="btn btn-outline-primary"><i class="fa fa-plus"></i></a>
+                            </div>
 
 
                         </div>
@@ -110,7 +110,7 @@
 
 
 
-                                           <input class="form-control" id="form-search-msg"   type="text" name="form-search-msg-body" placeholder="Search Here Please">
+                                            <input class="form-control" id="form-search-msg"   type="text" name="form-search-msg-body" placeholder="Search Here Please">
                                         </form>
                                     </div>
 
@@ -128,7 +128,17 @@
                                                     <div class="message-data">
                                                         <span class="message-data-time">{{ message.timestamp.strftime('%Y-%m-%d-%H:%M:%S') }}</span>
                                                     </div>
-                                                    <div class="message my-message">{{ message.body }}</div>
+
+                                                    <!-- if (message.id = (un des noms de fichiers stockés sur le serveur)
+                                                            if (c'est une image)
+                                                                <img> afficher l'image en petit qui se trouve au chemin ./assets/<message.id>.extension</img>
+                                                            else
+                                                                <petit panneau avec une icone de fichier et un bouton de telechargement></...>
+
+                                                    -->
+                                                    {% if message.body != "" %}
+                                                        <div class="message my-message">{{ message.body }}</div>
+                                                    {% endif %}
                                                 </li>
 
                                             {% else %}
@@ -141,7 +151,10 @@
                                                         </div>
                                                     </div>
                                                     <div class="row float-right">
-                                                        <div class="message other-message float-right">{{ message.body }}</div>
+                                                    <!-- pareil que au dessus -->
+                                                        {% if message.body != "" %}
+                                                            <div class="message other-message float-right">{{ message.body }}</div>
+                                                        {% endif %}
                                                     </div>
 
                                                 </li>
