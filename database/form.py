@@ -43,4 +43,7 @@ class GroupSettingsForm_ChangeName(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class GroupSettingsForm_AddMember(FlaskForm):
+    username = StringField('username', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 

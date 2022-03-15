@@ -144,7 +144,7 @@ class Group(db.Model):
     name = db.Column(db.String())
     avatar = db.Column(db.String(), default='https://www.gravatar.com/avatar/{}?d=identicon&s={}') #source de l'image ou "" pour une conversation à 2
     creator_id = db.Column(db.Integer(),db.ForeignKey('user.id'))
-    members = db.relationship('User', backref='groups' ,secondary=members_table)
+    members = db.relationship('User', backref='groups', secondary=members_table)
 
 
     def get_avatar(self, size, current_user):

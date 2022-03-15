@@ -15,12 +15,27 @@
     {% endfor %}
     </ul>
 
+    <!-- ADD MEMBERS -->
+    <h4>Add Members</h4>
+    <form action="" method="post">
+    {{ form_addmember.hidden_tag() }}
+        <p>
+
+
+            {{ form_addmember.username(size=32) }}<br>
+            {% for error in form_addmember.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form_addmember.submit() }}</p>
+    </form>
 
     <!-- CHANGE NAME -->
+    <h4>Group Name</h4>
     <form action="" method="post">
         {{ form_changename.hidden_tag() }}
         <p>
-        <h4>Group Name</h4>
+
 
             {{ form_changename.name(size=32) }}<br>
             {% for error in form_changename.name.errors %}

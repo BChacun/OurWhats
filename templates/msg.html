@@ -51,7 +51,7 @@
                                                     <div class="name">{{ group.get_name(current_user) }} </div>
                                                     <div class="status">
 
-                                                        {% set targetted_user = group.members.get_other_user_first(self,current_user) %}
+                                                        {% set targetted_user = group.get_other_user_first(current_user) %}
                                                         {{ targetted_user.is_logged() | safe }}
                                                         {{ targetted_user.last_seen.strftime('%Y-%m-%d')}}
                                                         <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
@@ -89,7 +89,7 @@
                                             <h6 class="m-b-0"> {{ discussion.get_name(current_user) }}</h6>
                                             <small>
                                                 {% if discussion.members_count()==1 %}
-                                                    Last seen : {{ discussion.members.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
+                                                    Last seen : {{ discussion.get_other_user_first(current_user).last_seen.strftime('%Y-%m-%d')}}
                                                 {% endif %}
 
                                             </small>
