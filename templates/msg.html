@@ -105,7 +105,13 @@
                                         <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
                                         <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
                                         <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>-->
+                                        <form action="{{ url_for("send_msg", discussion_id =discussion.id)}}" method="post">
 
+
+
+
+                                           <input class="form-control" id="form-search-msg"   type="text" name="form-search-msg-body" placeholder="Search Here Please">
+                                        </form>
                                     </div>
 
 
@@ -165,7 +171,7 @@
 
 
                                         </div>
-                                        <input class="form-control" type="text" name="body" placeholder="Write Here Please">
+                                        <input class="form-control" id="form-send-msg" type="text" name="form-send-msg-body" placeholder="Write Here Please">
 
 
 
