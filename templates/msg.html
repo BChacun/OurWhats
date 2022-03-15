@@ -148,10 +148,13 @@
                                 </div>
                             </div>
                             <div class="chat-message clearfix">
-                                <form action="{{ url_for("send_msg", discussion_id =discussion.id)}}" method="post">
+                                <form action="{{ url_for("send_msg", discussion_id =discussion.id)}}" enctype="multipart/form-data" method="post">
                                     <div class="input-group mb-0">
 
-
+                                        <div class="col-sm-6 form-group">
+                                            <label>add image</label>
+                                            <input type="file" name="image" class="form-control-file">
+                                        </div>
 
 
                                         <div class="input-group-prepend">
@@ -170,7 +173,6 @@
                                         <!-- <input type="text" class="form-control" placeholder="Enter text here..."> -->
 
                                     </div>
-                                </form>
                                 </form>
                             </div>
                         </div>

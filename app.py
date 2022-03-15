@@ -1,16 +1,24 @@
+import os
+
 import flask
-import sqlalchemy
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required, logout_user, LoginManager, login_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
+
 from database.database import db, init_database
 import database.models as models
 from config.config import Config
 from datetime import datetime
 from database.form import EditProfileForm, NewGroupForm
 
-app = flask.Flask(__name__)
+from flask_wtf import Form
+from werkzeug.utils import secure_filename
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+from flask_wtf.csrf import CSRFProtect
+import os
+
+app = flask.Flask('__name__', template_folder="./templates/")
 app.config.from_object(Config)
 db.init_app(app)
 login_manager = LoginManager()
@@ -18,6 +26,10 @@ login_manager.login_view = 'login'
 login_manager.init_app(app)
 migrate = Migrate(app, db)
 
+#csrf = CSRFProtect()
+app.config['SECRET_KEY'] = '325245hkhf486axcv5719bf9397cbn69xv'
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max-limit.
+#csrf.init_app(app)
 
 @login_manager.user_loader
 def load_user(user):
@@ -81,6 +93,7 @@ def signup():
                            password=generate_password_hash(password, method='sha256'))
         db.session.add(user)
         db.session.commit()
+        os.mkdir("./assets/"+str(user.id))
     else:
         return "Please fill the form"
     return profile()
@@ -169,6 +182,14 @@ def msg_home():
         discussion = models.Group.new_group(current_user.username,current_user.id,current_user.avatar,[current_user])
     return msg_view(discussion.id)
 
+
+
+class DocumentUploadForm(Form):
+    image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')])
+    #ne fonctionne pas: aucune verification de format pour l'instant
+
+
+
 @app.route('/msg/<discussion_id>')
 @login_required
 def msg_view(discussion_id):
@@ -176,11 +197,6 @@ def msg_view(discussion_id):
 
     groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
-
-    #test
-    #models.Message.send_message_to_group("test",current_user.id,current_group.id,None,"text")
-
-
 
     messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
 
@@ -196,9 +212,18 @@ def msg_view(discussion_id):
 @app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
 @login_required
 def send_msg(discussion_id):
+    form = DocumentUploadForm()
+    assets_dir = os.path.join(
+        os.path.dirname(app.instance_path), 'assets'
+    )
+    f = form.image.data
+    if f is not None:
+        filename = secure_filename(f.filename)
 
+        f.save(os.path.join(assets_dir, str(current_user.id), filename))
 
-    app.logger.info("test")
+        print('Document uploaded successfully.')
+
     models.Message.send_message_to_group(flask.request.form.get('body'),current_user.id,discussion_id,None,"text")
     return msg_view(discussion_id)
 
