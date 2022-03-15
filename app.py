@@ -208,26 +208,23 @@ def msg_view(discussion_id):
 @app.route('/msg/<discussion_id>', methods=['GET', 'POST'])
 @login_required
 def send_msg(discussion_id):
-    form = DocumentUploadForm()
-    assets_dir = os.path.join(
-        os.path.dirname(app.instance_path), 'assets'
-    )
-    f = form.image.data
-    id = models.Message.send_message_to_group(flask.request.form.get('body'), current_user.id, discussion_id, None,
-                                              "text")
-    if f is not None:
-        filename = secure_filename(f.filename)
-        name=str(id)+"."+filename.split(".",1)[1]
-
-        f.save(os.path.join(assets_dir, str(current_user.id), name))
-
-        print('Document uploaded successfully.')
 
     if "form-send-msg-body" in request.form:
 
-        app.logger.info("test")
-        models.Message.send_message_to_group(flask.request.form.get('form-send-msg-body'),current_user.id,discussion_id,None,"text")
+        msg_id=models.Message.send_message_to_group(flask.request.form.get('form-send-msg-body'),current_user.id,discussion_id,None,"text")
+        form = DocumentUploadForm()
+        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'assets')
+        f = form.image.data
+
+        if f is not None:
+            filename = str(msg_id) + "." + secure_filename(f.filename).split(".", 1)[1]
+
+            f.save(os.path.join(assets_dir, str(current_user.id),
+                                filename))  # saves the file in the folder that is named current_user.id
+
+            print('Document uploaded successfully.')
         return msg_view(discussion_id)
+
 
     if "form-search-msg-body" in request.form:
         groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
