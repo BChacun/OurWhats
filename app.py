@@ -216,6 +216,17 @@ def new_group():
 
         return render_template('new_group.html', title='New Group',form=form)
 
+@app.route('/group_settings/<group_id>', methods=['GET', 'POST'])
+@login_required
+def group_settings(group_id):
+    form = NewGroupForm()
+    if form.validate_on_submit() :
+        current_group = models.Group.new_group(form.name.data,current_user.id,current_user.avatar,[current_user])
+        flash('New Group created !')
+        return msg_view(current_group.id)
 
+    elif request.method == 'GET':
+
+        return render_template('group_settings.html', title='Group Settings',form=form)
 
 
