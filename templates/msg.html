@@ -77,9 +77,9 @@
 
                             </ul>
 
-                        <div class="text-center">
-                        <a href="{{ url_for('new_group') }}" class="btn btn-outline-primary"><i class="fa fa-plus"></i></a>
-                        </div>
+                            <div class="text-center">
+                                <a href="{{ url_for('new_group') }}" class="btn btn-outline-primary"><i class="fa fa-plus"></i></a>
+                            </div>
 
 
                         </div>
@@ -110,7 +110,7 @@
 
 
 
-                                           <input class="form-control" id="form-search-msg"   type="text" name="form-search-msg-body" placeholder="Search Here Please">
+                                            <input class="form-control" id="form-search-msg"   type="text" name="form-search-msg-body" placeholder="Search Here Please">
                                         </form>
                                     </div>
 
@@ -128,7 +128,26 @@
                                                     <div class="message-data">
                                                         <span class="message-data-time">{{ message.timestamp.strftime('%Y-%m-%d-%H:%M:%S') }}</span>
                                                     </div>
-                                                    <div class="message my-message">{{ message.body }}</div>
+
+                                                    {% if message.body != "" %}
+                                                        <div class="message my-message">{{ message.body }}</div>
+                                                    {% endif %}
+
+                                                    {% if message.id in files.keys() %}
+                                                        <div class="file">
+                                                            <a href="{{ url_for("download_file", sender_id=message.sender_id, filename= files[message.id])}}">
+                                                                <i class="fa fa-file"></i>
+                                                                download file
+                                                                <i class="fa fa-download"></i>
+                                                            </a>
+                                                        </div>
+                                                    {% elif message.id in images.keys() %}
+                                                        <div class="image-file">
+                                                            <!--href="{{ url_for("download_file", sender_id=message.sender_id, filename= images[message.id])}}" doesn't work,
+                                                                            would download the image when clicking on it-->
+                                                            <img src="/static/assets/{{ message.sender_id }}/{{ images[message.id] }}" alt="image" width="200">
+                                                        </div>
+                                                    {% endif %}
                                                 </li>
 
                                             {% else %}
@@ -141,7 +160,25 @@
                                                         </div>
                                                     </div>
                                                     <div class="row float-right">
-                                                        <div class="message other-message float-right">{{ message.body }}</div>
+                                                        {% if message.body != "" %}
+                                                            <div class="message my-message">{{ message.body }}</div>
+                                                        {% endif %}
+
+                                                        {% if message.id in files.keys() %}
+                                                            <div class="file">
+                                                                <a href="{{ url_for("download_file", sender_id=message.sender_id, filename= files[message.id])}}">
+                                                                    <i class="fa fa-file"></i>
+                                                                    download file
+                                                                    <i class="fa fa-download"></i>
+                                                                </a>
+                                                            </div>
+                                                        {% elif message.id in images.keys() %}
+                                                            <div class="image-file">
+                                                                <!--href="{{ url_for("download_file", sender_id=message.sender_id, filename= images[message.id])}}" doesn't work,
+                                                                            would download the image when clicking on it-->
+                                                                <img src="/static/assets/{{ message.sender_id }}/{{ images[message.id] }}" alt="image" width="200">
+                                                            </div>
+                                                        {% endif %}
                                                     </div>
 
                                                 </li>
@@ -159,10 +196,13 @@
                                 </div>
                             </div>
                             <div class="chat-message clearfix">
-                                <form action="{{ url_for("send_msg", discussion_id =discussion.id)}}" method="post">
+                                <form action="{{ url_for("send_msg", discussion_id =discussion.id)}}" enctype="multipart/form-data" method="post">
                                     <div class="input-group mb-0">
 
-
+                                        <div class="col-sm-6 form-group">
+                                            <label>add image</label>
+                                            <input type="file" name="image" class="form-control-file">
+                                        </div>
 
 
                                         <div class="input-group-prepend">
@@ -181,7 +221,6 @@
                                         <!-- <input type="text" class="form-control" placeholder="Enter text here..."> -->
 
                                     </div>
-                                </form>
                                 </form>
                             </div>
                         </div>

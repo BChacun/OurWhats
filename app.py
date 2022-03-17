@@ -1,22 +1,31 @@
+import os
+
 import flask
-import sqlalchemy
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required, logout_user, LoginManager, login_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
+
 from database.database import db, init_database
 import database.models as models
 from config.config import Config
 from datetime import datetime,timedelta
 from database.form import EditProfileForm, NewGroupForm, GroupSettingsForm_ChangeName, GroupSettingsForm_AddMember
 
-app = flask.Flask(__name__)
+from flask_wtf import Form
+from werkzeug.utils import secure_filename
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+import os
+
+app = flask.Flask('__name__')
 app.config.from_object(Config)
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 migrate = Migrate(app, db)
+
+
 
 
 @login_manager.user_loader
@@ -81,6 +90,7 @@ def signup():
                            password=generate_password_hash(password, method='sha256'))
         db.session.add(user)
         db.session.commit()
+        os.mkdir("./static/assets/"+str(user.id))
     else:
         return "Please fill the form"
     return profile()
@@ -169,33 +179,38 @@ def msg_home():
         discussion = models.Group.new_group(current_user.username,current_user.id,current_user.avatar,[current_user])
     return msg_view(discussion.id)
 
+
+
+class DocumentUploadForm(Form):
+    image = FileField('Image', validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')])
+    #ne fonctionne pas: aucune verification de format pour l'instant
+
+
+
 @app.route('/msg/<discussion_id>')
 @login_required
 def msg_view(discussion_id):
 
-
+    files={}
+    images={}
     groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
 
-    messages = models.Message.query.filter_by(group_recipient_id=current_group.id).all()
+    messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
 
-
-
-
-
-
-    #test
-    #models.Message.send_message_to_group("test",current_user.id,current_group.id,None,"text")
-
-
-
-
+    for member in current_group.members:
+        for path in os.listdir("./static/assets/" + str(member.id)):
+            if models.Message.query.filter_by(group_recipient_id=discussion_id, id=path.split(".", 1)[0]).first() is not None:
+                if path.split(".", 1)[1] == "png" or path.split(".", 1)[1] == "jpg":
+                    images[int(path.split(".", 1)[0])] = path
+                else:
+                    files[int(path.split(".", 1)[0])] = path
 
     for message in messages:
         message.seen_by(current_user)
 
     return render_template('msg.html', messages=messages, discussion = current_group,
-                            discussions_list=groups_list, current_user=current_user, models=models)
+                            discussions_list=groups_list, current_user=current_user, models=models, images = images,files=files)
 
 
 
@@ -206,9 +221,22 @@ def send_msg(discussion_id):
 
     if "form-send-msg-body" in request.form:
 
-        app.logger.info("test")
-        models.Message.send_message_to_group(flask.request.form.get('form-send-msg-body'),current_user.id,discussion_id,None,"text")
+        form = DocumentUploadForm()
+        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'static/assets')
+        f = form.image.data
+
+        if flask.request.form.get('form-send-msg-body') is not "" or f is not None:
+            msg_id=models.Message.send_message_to_group(flask.request.form.get('form-send-msg-body'),current_user.id,discussion_id,None,"text")
+
+            if f is not None:
+                filename = str(msg_id) + "." + secure_filename(f.filename).split(".", 1)[1]
+
+                f.save(os.path.join(assets_dir, str(current_user.id),
+                                filename))  # saves the file in the folder that is named current_user.id
+
+                print('Document uploaded successfully.')
         return msg_view(discussion_id)
+
 
     if "form-search-msg-body" in request.form:
         groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
@@ -226,7 +254,11 @@ def send_msg(discussion_id):
     return msg_view(discussion_id)
 
 
-
+@app.route('/download/<sender_id>/<filename>', methods=['GET', 'POST'])
+@login_required
+def download_file(sender_id, filename):
+    print("path" + " download ")
+    return flask.send_file("./static/assets/"+str(sender_id)+"/"+str(filename), as_attachment=True)
 
 
 @app.route('/new_group', methods=['GET', 'POST'])
