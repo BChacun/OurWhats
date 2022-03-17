@@ -17,13 +17,14 @@ from werkzeug.utils import secure_filename
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 import os
 
-app = flask.Flask('__name__', template_folder="./templates/")
+app = flask.Flask('__name__')
 app.config.from_object(Config)
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 migrate = Migrate(app, db)
+
 
 
 
@@ -89,7 +90,7 @@ def signup():
                            password=generate_password_hash(password, method='sha256'))
         db.session.add(user)
         db.session.commit()
-        os.mkdir("./assets/"+str(user.id))
+        os.mkdir("./static/assets/"+str(user.id))
     else:
         return "Please fill the form"
     return profile()
@@ -190,17 +191,26 @@ class DocumentUploadForm(Form):
 @login_required
 def msg_view(discussion_id):
 
-
+    files={}
+    images={}
     groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
 
     messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
 
+    for member in current_group.members:
+        for path in os.listdir("./static/assets/" + str(member.id)):
+            if models.Message.query.filter_by(group_recipient_id=discussion_id, id=path.split(".", 1)[0]).first() is not None:
+                if path.split(".", 1)[1] == "png" or path.split(".", 1)[1] == "jpg":
+                    images[int(path.split(".", 1)[0])] = path
+                else:
+                    files[int(path.split(".", 1)[0])] = path
+
     for message in messages:
         message.seen_by(current_user)
 
     return render_template('msg.html', messages=messages, discussion = current_group,
-                            discussions_list=groups_list, current_user=current_user, models=models)
+                            discussions_list=groups_list, current_user=current_user, models=models, images = images,files=files)
 
 
 
@@ -212,7 +222,7 @@ def send_msg(discussion_id):
     if "form-send-msg-body" in request.form:
 
         form = DocumentUploadForm()
-        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'assets')
+        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'static/assets')
         f = form.image.data
 
         if flask.request.form.get('form-send-msg-body') is not "" or f is not None:
@@ -244,7 +254,11 @@ def send_msg(discussion_id):
     return msg_view(discussion_id)
 
 
-
+@app.route('/download/<sender_id>/<filename>', methods=['GET', 'POST'])
+@login_required
+def download_file(sender_id, filename):
+    print("path" + " download ")
+    return flask.send_file("./static/assets/"+str(sender_id)+"/"+str(filename), as_attachment=True)
 
 
 @app.route('/new_group', methods=['GET', 'POST'])

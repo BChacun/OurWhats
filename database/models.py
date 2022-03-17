@@ -65,7 +65,7 @@ class User(UserMixin, db.Model):
     def files_sent(self):
         count=0
         size=0
-        dir_path="./assets/"+str(self.id)
+        dir_path="./static/assets/"+str(self.id)
         for path in os.scandir(dir_path):
             # check if current path is a file
             if path.is_file():
@@ -86,7 +86,7 @@ class User(UserMixin, db.Model):
         size=0
         query=db.session.query(Message).join(Group).join(User).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all()
         for message in query:
-            dir_path = "./assets/" + str(message.sender_id)
+            dir_path = "./static/assets/" + str(message.sender_id)
             for path in os.listdir(dir_path):
                 if os.path.isfile(os.path.join(dir_path, path)) & (os.path.basename(path).split(".", 1)[0] == str(message.sender_id)):
                     count+=1

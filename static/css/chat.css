@@ -148,6 +148,8 @@ body{
     background: #efefef
 }
 
+
+
 .chat .chat-history .my-message:after {
     bottom: 100%;
     left: 30px;
@@ -161,6 +163,7 @@ body{
     border-width: 10px;
     margin-left: -10px
 }
+
 
 .chat .chat-history .other-message {
     background: #e8f1f3;

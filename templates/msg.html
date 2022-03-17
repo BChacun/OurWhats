@@ -129,15 +129,24 @@
                                                         <span class="message-data-time">{{ message.timestamp.strftime('%Y-%m-%d-%H:%M:%S') }}</span>
                                                     </div>
 
-                                                    <!-- if (message.id = (un des noms de fichiers stockés sur le serveur)
-                                                            if (c'est une image)
-                                                                <img> afficher l'image en petit qui se trouve au chemin ./assets/<message.id>.extension</img>
-                                                            else
-                                                                <petit panneau avec une icone de fichier et un bouton de telechargement></...>
-
-                                                    -->
                                                     {% if message.body != "" %}
                                                         <div class="message my-message">{{ message.body }}</div>
+                                                    {% endif %}
+
+                                                    {% if message.id in files.keys() %}
+                                                        <div class="file">
+                                                            <a href="{{ url_for("download_file", sender_id=message.sender_id, filename= files[message.id])}}">
+                                                                <i class="fa fa-file"></i>
+                                                                download file
+                                                                <i class="fa fa-download"></i>
+                                                            </a>
+                                                        </div>
+                                                    {% elif message.id in images.keys() %}
+                                                        <div class="image-file">
+                                                            <!--href="{{ url_for("download_file", sender_id=message.sender_id, filename= images[message.id])}}" doesn't work,
+                                                                            would download the image when clicking on it-->
+                                                            <img src="/static/assets/{{ message.sender_id }}/{{ images[message.id] }}" alt="image" width="200">
+                                                        </div>
                                                     {% endif %}
                                                 </li>
 
@@ -151,9 +160,24 @@
                                                         </div>
                                                     </div>
                                                     <div class="row float-right">
-                                                    <!-- pareil que au dessus -->
                                                         {% if message.body != "" %}
-                                                            <div class="message other-message float-right">{{ message.body }}</div>
+                                                            <div class="message my-message">{{ message.body }}</div>
+                                                        {% endif %}
+
+                                                        {% if message.id in files.keys() %}
+                                                            <div class="file">
+                                                                <a href="{{ url_for("download_file", sender_id=message.sender_id, filename= files[message.id])}}">
+                                                                    <i class="fa fa-file"></i>
+                                                                    download file
+                                                                    <i class="fa fa-download"></i>
+                                                                </a>
+                                                            </div>
+                                                        {% elif message.id in images.keys() %}
+                                                            <div class="image-file">
+                                                                <!--href="{{ url_for("download_file", sender_id=message.sender_id, filename= images[message.id])}}" doesn't work,
+                                                                            would download the image when clicking on it-->
+                                                                <img src="/static/assets/{{ message.sender_id }}/{{ images[message.id] }}" alt="image" width="200">
+                                                            </div>
                                                         {% endif %}
                                                     </div>
 
