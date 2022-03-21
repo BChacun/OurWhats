@@ -155,7 +155,7 @@
                                                 <li class="clearfix">
                                                     <div class="row">
                                                         <div class="message-data">
-                                                            <img class="float-right" src={{ url_for('static', filename=discussion.get_avatar(models.User.query.filter_by(id=message.sender_id).first_or_404())) }} alt="avatar">
+                                                            <img class="float-right" src={{ url_for('static', filename= models.User.query.filter_by(id=message.sender_id).first_or_404().get_avatar()) }} alt="avatar">
                                                             <span class="message-data-time float-end">{{ message.timestamp.strftime('%Y-%m-%d-%H:%M:%S') }}</span>
                                                         </div>
                                                     </div>

@@ -177,16 +177,17 @@ class Group(db.Model):
 
     #returns the name of the group to display to the user passed in parameter
     def get_name(self,current_user):
-        if self.members_count() <=2:
-            return self.get_other_user_first(current_user).username
+        if self.name is not None:
+            if self.members_count() <=2:
+                return self.get_other_user_first(current_user).username
         return self.name
 
 
     @staticmethod
-    def new_group(name, creator_id, avatar, members=None):
+    def new_group(name, creator_id, members=None):
         if members is None:
             members = []
-        group = Group(name=name, creator_id=creator_id, avatar=avatar)
+        group = Group(name=name, creator_id=creator_id)
         for member in members:
             group.members.append(member)
         db.session.add(group)

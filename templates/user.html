@@ -28,7 +28,9 @@
 
                 <div>
                     <h6 class="m-b-20 p-b-5 b-b-default f-w-600">About me</h6>
+                    {% if user.about_me != None %}
                     {{ user.about_me }}
+                    {% endif %}
 
                 </div>
             </div>

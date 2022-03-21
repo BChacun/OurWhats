@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+
     <h1>Edit Profile</h1>
     <form action="" method="post" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
-    
-    <img src="{{ url_for('static',filename=current_user.get_avatar()) }}" width="100">
-    
+
+        <img src="{{ url_for('static',filename=current_user.get_avatar()) }}" width="100">
+
         <p>
             {{ form.username.label }}<br>
             {{ form.username(size=32) }}<br>
@@ -22,9 +24,9 @@
             {% endfor %}
         </p>
         <div class="col-sm-6 form-group">
-            <label>change profile picture</label>
+            <label>change profile picture</label><br>
             {{form.profile}}
-        </div>
+        </div><br><br>
         <p>{{ form.submit() }}</p>
     </form>
 {% endblock %}

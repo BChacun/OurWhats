@@ -186,7 +186,7 @@ def edit_profile():
 def msg_home():
     discussion = models.Group.query.filter(models.Group.members.any(id=current_user.id)).first()
     if discussion is None:
-        discussion = models.Group.new_group(current_user.username,current_user.id,current_user.avatar,[current_user])
+        discussion = models.Group.new_group(current_user.username,current_user.id,[current_user])
     return msg_view(discussion.id)
 
 
@@ -276,7 +276,7 @@ def download_file(sender_id, filename):
 def new_group():
     form = NewGroupForm()
     if form.validate_on_submit() :
-        current_group = models.Group.new_group(form.name.data,current_user.id,current_user.avatar,[current_user])
+        current_group = models.Group.new_group(form.name.data,current_user.id,[current_user])
         flash('New Group created !')
         return msg_view(current_group.id)
 
