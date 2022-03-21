@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, validators
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, ValidationError
@@ -20,6 +21,8 @@ class LoginForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
+    profile = FileField('Profile picture', validators=[FileAllowed(['jpg', 'png'], 'Images only!')])
+
     submit = SubmitField('Submit')
 
     def __init__(self, original_username, *args, **kwargs):
@@ -34,9 +37,9 @@ class EditProfileForm(FlaskForm):
 
 
 
-
 class NewGroupForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
+    profile = FileField('Profile picture', validators=[FileAllowed(['jpg', 'png'], 'Images only!')])
     submit = SubmitField('Submit')
 
 class GroupSettingsForm_ChangeName(FlaskForm):
@@ -45,6 +48,10 @@ class GroupSettingsForm_ChangeName(FlaskForm):
 
 class GroupSettingsForm_AddMember(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class GroupSettingsForm_ChangeProfile(FlaskForm):
+    profile = FileField('Profile picture', validators=[DataRequired(),FileAllowed(['jpg', 'png'], 'Images only!')])
     submit = SubmitField('Submit')
 
 

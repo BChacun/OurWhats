@@ -7,7 +7,7 @@
     <div class="row m-l-0 m-r-0">
         <div class="col-sm-4 bg-c-lite-green user-profile">
             <div class="card-block text-center text-white">
-                <div class="m-b-25"> <img src={{ user.get_avatar(128) }} class="img-radius" alt="User-Profile-Image"> </div>
+                <div class="m-b-25"> <img src={{ url_for('static',filename=user.get_avatar()) }} class="img-radius" alt="User-Profile-Image" width="128"> </div>
                 <h4 class="f-w-600">{{ user.username}}</h4>
                 <a type="button" class="btn btn-light" href="{{ url_for('edit_profile') }}">edit your profile</a> <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
             </div>
@@ -27,10 +27,8 @@
                 </div>
 
                 <div>
-                    <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Posts</h6>
-                    {% for post in posts %}
-                        {% include '_post.html' %}
-                    {% endfor %}
+                    <h6 class="m-b-20 p-b-5 b-b-default f-w-600">About me</h6>
+                    {{ user.about_me }}
 
                 </div>
             </div>

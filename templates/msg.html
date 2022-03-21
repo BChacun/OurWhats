@@ -33,7 +33,7 @@
 
                                     <li class="clearfix">
                                         <a class="nav-link" href="{{ url_for('msg_view', discussion_id =group.id) }}">
-                                            <img src={{ group.get_avatar(315,current_user) }} alt="avatar">
+                                            <img src={{ url_for('static', filename=group.get_avatar(current_user)) }} alt="avatar">
                                             <div class="about">
 
                                                 {% if group.members_count()==1 %}
@@ -88,7 +88,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                            <img src={{ discussion.get_avatar(315,current_user) }} alt="avatar">
+                                            <img src={{url_for('static', filename=discussion.get_avatar(current_user)) }} alt="avatar">
                                         </a>
                                         <div class="chat-about">
                                             <h6 class="m-b-0"> {{ discussion.get_name(current_user) }}</h6>
@@ -155,7 +155,7 @@
                                                 <li class="clearfix">
                                                     <div class="row">
                                                         <div class="message-data">
-                                                            <img class="float-right" src={{ discussion.get_avatar(64, models.User.query.filter_by(id=message.sender_id).first_or_404()) }} alt="avatar">
+                                                            <img class="float-right" src={{ url_for('static', filename=discussion.get_avatar(models.User.query.filter_by(id=message.sender_id).first_or_404())) }} alt="avatar">
                                                             <span class="message-data-time float-end">{{ message.timestamp.strftime('%Y-%m-%d-%H:%M:%S') }}</span>
                                                         </div>
                                                     </div>

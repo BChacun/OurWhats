@@ -18,7 +18,6 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String, unique=True)
     username = db.Column(db.String, unique=True)
     password = db.Column(db.String)
-    avatar = db.Column(db.String(), default='https://www.gravatar.com/avatar/{}?d=identicon&s={}')
     authenticated = db.Column(db.Boolean, default=False)
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
@@ -39,10 +38,8 @@ class User(UserMixin, db.Model):
         """False, as anonymous users aren't supported."""
         return False
 
-    def get_avatar(self, size):
-        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return self.avatar.format(
-            digest, size)
+    def get_avatar(self):
+        return "/assets/" + str(self.id) + "/profile.jpg"
 
     def unread_messages_count(self):
         return len(db.session.query(Message).join(Group).join(User).filter((User.id==self.id) & (sqlalchemy.not_(Message.seen.any(id=self.id)))).all())
@@ -151,18 +148,18 @@ class Group(db.Model):
     __tablename__ = 'group'
     id=db.Column(db.Integer(),primary_key=True)
     name = db.Column(db.String())
-    avatar = db.Column(db.String(), default='https://www.gravatar.com/avatar/{}?d=identicon&s={}') #source de l'image ou "" pour une conversation à 2
     creator_id = db.Column(db.Integer(),db.ForeignKey('user.id'))
     members = db.relationship('User', backref='groups', secondary=members_table)
 
 
-    def get_avatar(self, size, current_user):
-        if self.avatar=="":
-            #si c'est une discussion à 2 alors self.avatar=="", et on prend l'avatar de l'autre user
-            return self.get_other_user_first(current_user).get_avatar(size)
-
-        digest = md5(self.name.lower().encode('utf-8')).hexdigest()
-        return self.avatar.format(digest, size)
+    def get_avatar(self, current_user):
+        dir_path = "./static/assets/groups"
+        for path in os.scandir(dir_path):
+            if "/"+str(self.id)+"." in "/"+path.name:
+                return "/assets/groups/"+path.name
+        if self.members_count()<=2:
+            return self.get_other_user_first(current_user).get_avatar()
+        return "/assets/groups/profile.jpg"
 
     def members_count(self):
         return len(self.members)
@@ -204,11 +201,6 @@ class Group(db.Model):
 
     def remove_member(self,member_id):
         self.members.remove(member_id)
-        db.session.add(self)
-        db.session.commit()
-
-    def change_avatar(self,source):
-        self.avatar=source
         db.session.add(self)
         db.session.commit()
 
