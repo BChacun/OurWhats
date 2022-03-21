@@ -43,14 +43,23 @@
         {{ form_changename.hidden_tag() }}
         <p>
 
-
             {{ form_changename.name(size=32) }}<br>
             {% for error in form_changename.name.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>{{ form_changename.submit() }}</p>
+
     </form>
+
+    <form enctype="multipart/form-data" method="post">
+    {{form_changeprofile.hidden_tag() }}
+        <h4>Group Picture</h4>
+
+    <p>{{ form_changeprofile.profile }}<br></p>
+    <p>{{ form_changeprofile.submit }}</p>
+    </form>
+
 
 
 {% endblock %}

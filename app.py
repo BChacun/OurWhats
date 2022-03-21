@@ -1,4 +1,6 @@
 import os
+import shutil
+from os.path import dirname, realpath
 
 import flask
 from flask import render_template, redirect, url_for, request, flash
@@ -10,15 +12,17 @@ from database.database import db, init_database
 import database.models as models
 from config.config import Config
 from datetime import datetime,timedelta
-from database.form import EditProfileForm, NewGroupForm, GroupSettingsForm_ChangeName, GroupSettingsForm_AddMember
+from database.form import EditProfileForm, NewGroupForm, GroupSettingsForm_ChangeName, GroupSettingsForm_AddMember, \
+    GroupSettingsForm_ChangeProfile
 
-from flask_wtf import Form
+from flask_wtf import Form, FlaskForm
 from werkzeug.utils import secure_filename
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 import os
 
 app = flask.Flask('__name__')
 app.config.from_object(Config)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
@@ -58,6 +62,7 @@ def profile():
 def board():
     #db.drop_all()
     #db.create_all()
+    shutil.copyfile("./static/assets/profile.jpg", "./static/assets/" + str(current_user.id) + "/profile.jpg")
     return render_template("board.html", user=current_user )
 
 
@@ -91,6 +96,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
         os.mkdir("./static/assets/"+str(user.id))
+        shutil.copyfile("./static/assets/profile.jpg","./static/assets/"+str(user.id)+"/profile.jpg")
     else:
         return "Please fill the form"
     return profile()
@@ -162,13 +168,17 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash('Your changes have been saved.')
+        f = form.profile.data
+        if f is not None:
+            f.save("./static/assets/"+str(current_user.id)+"/profile.jpg")
+            f.close()
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
+        form.profile.data = current_user.get_avatar()
     return render_template('edit_profile.html', title='Edit Profile',
-                           form=form)
+                           form=form, current_user=current_user)
 
 
 @app.route('/msg')
@@ -176,7 +186,7 @@ def edit_profile():
 def msg_home():
     discussion = models.Group.query.filter(models.Group.members.any(id=current_user.id)).first()
     if discussion is None:
-        discussion = models.Group.new_group(current_user.username,current_user.id,current_user.avatar,[current_user])
+        discussion = models.Group.new_group(current_user.username,current_user.id,[current_user])
     return msg_view(discussion.id)
 
 
@@ -233,6 +243,7 @@ def send_msg(discussion_id):
 
                 f.save(os.path.join(assets_dir, str(current_user.id),
                                 filename))  # saves the file in the folder that is named current_user.id
+                f.close()
 
                 print('Document uploaded successfully.')
         return msg_view(discussion_id)
@@ -257,7 +268,6 @@ def send_msg(discussion_id):
 @app.route('/download/<sender_id>/<filename>', methods=['GET', 'POST'])
 @login_required
 def download_file(sender_id, filename):
-    print("path" + " download ")
     return flask.send_file("./static/assets/"+str(sender_id)+"/"+str(filename), as_attachment=True)
 
 
@@ -266,7 +276,7 @@ def download_file(sender_id, filename):
 def new_group():
     form = NewGroupForm()
     if form.validate_on_submit() :
-        current_group = models.Group.new_group(form.name.data,current_user.id,current_user.avatar,[current_user])
+        current_group = models.Group.new_group(form.name.data,current_user.id,[current_user])
         flash('New Group created !')
         return msg_view(current_group.id)
 
@@ -279,6 +289,7 @@ def new_group():
 def group_settings(group_id):
     form_changename = GroupSettingsForm_ChangeName()
     form_addmember = GroupSettingsForm_AddMember()
+    form_changeprofile = GroupSettingsForm_ChangeProfile()
 
     current_group = models.Group.query.filter_by(id=group_id).first()
 
@@ -287,19 +298,29 @@ def group_settings(group_id):
     if form_changename.validate_on_submit() :
         current_group.name = form_changename.name.data
         flash('Name Changed !')
-        return render_template('group_settings.html', title='Group Settings',group = current_group,form_changename=form_changename, form_addmember=form_addmember)
+        return render_template('group_settings.html', title='Group Settings',group = current_group,form_changename=form_changename, form_addmember=form_addmember, form_changeprofile=form_changeprofile)
 
 
     if form_addmember.validate_on_submit() :
         new_member_id = models.User.query.filter_by(username=form_addmember.username.data).first()
         current_group.add_member(new_member_id)
         flash(form_addmember.username.data + ' Changed !')
-        return render_template('group_settings.html', title='Group Settings',group = current_group,form_changename=form_changename, form_addmember=form_addmember)
+        return render_template('group_settings.html', title='Group Settings',group = current_group,form_changename=form_changename, form_addmember=form_addmember, form_changeprofile=form_changeprofile)
+
+
+    if form_changeprofile.validate_on_submit():
+        f = form_changeprofile.profile.data
+        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'static/assets/groups')
+        if f is not None:
+            f.save(os.path.join(assets_dir, str(group_id)+ '.jpg'))
+            f.close()
+        return render_template('group_settings.html', title='Group Settings', group = current_group,form_changename=form_changename, form_addmember=form_addmember, form_changeprofile=form_changeprofile)
 
 
 
     elif request.method == 'GET':
-        return render_template('group_settings.html', title='Group Settings', group = current_group,form_changename=form_changename, form_addmember=form_addmember)
+        return render_template('group_settings.html', title='Group Settings', group = current_group,form_changename=form_changename, form_addmember=form_addmember, form_changeprofile=form_changeprofile)
+
 
 
 @app.route('/group_settings/deleting_user/<group_id>/<user_id>', methods=['GET', 'POST'])

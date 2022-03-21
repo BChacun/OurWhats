@@ -4,6 +4,7 @@
     <h1>New Group</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
+        {{ form.profile }}
         <p>
             {{ form.name.label }}<br>
             {{ form.name(size=32) }}<br>
