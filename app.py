@@ -1,5 +1,6 @@
 import os
 import shutil
+from os.path import dirname, realpath
 
 import flask
 from flask import render_template, redirect, url_for, request, flash
@@ -170,6 +171,7 @@ def edit_profile():
         f = form.profile.data
         if f is not None:
             f.save("./static/assets/"+str(current_user.id)+"/profile.jpg")
+            f.close()
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -241,6 +243,7 @@ def send_msg(discussion_id):
 
                 f.save(os.path.join(assets_dir, str(current_user.id),
                                 filename))  # saves the file in the folder that is named current_user.id
+                f.close()
 
                 print('Document uploaded successfully.')
         return msg_view(discussion_id)
@@ -307,8 +310,10 @@ def group_settings(group_id):
 
     if form_changeprofile.validate_on_submit():
         f = form_changeprofile.profile.data
+        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'static/assets/groups')
         if f is not None:
-            f.save(os.path.join('static/assets/group/',str(group_id)+'.jpg'))
+            f.save(os.path.join(assets_dir, str(group_id)+ '.jpg'))
+            f.close()
         return render_template('group_settings.html', title='Group Settings', group = current_group,form_changename=form_changename, form_addmember=form_addmember, form_changeprofile=form_changeprofile)
 
 
