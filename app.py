@@ -22,7 +22,6 @@ import os
 
 app = flask.Flask('__name__')
 app.config.from_object(Config)
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
@@ -62,7 +61,6 @@ def profile():
 def board():
     #db.drop_all()
     #db.create_all()
-    shutil.copyfile("./static/assets/profile.jpg", "./static/assets/" + str(current_user.id) + "/profile.jpg")
     return render_template("board.html", user=current_user )
 
 
@@ -122,7 +120,6 @@ def login():
         return render_template("login.html")
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)
-    posts = []
     return msg_home()
 
 
@@ -145,11 +142,7 @@ def show_users():
 def user(username):
 
     user_shown = models.User.query.filter_by(username=username).first_or_404()
-    posts = [
-        {'author': user_shown, 'body': 'Test post #1'},
-        {'author': user_shown, 'body': 'Test post #2'}
-    ]
-    return render_template('user.html', user=user_shown, posts=posts)
+    return render_template('user.html', user=user_shown)
 
 @app.before_request
 def before_request():
@@ -201,13 +194,14 @@ class DocumentUploadForm(Form):
 @login_required
 def msg_view(discussion_id):
 
-    files={}
-    images={}
+
     groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
     current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
 
     messages = models.Message.query.filter_by(group_recipient_id = current_group.id).all()
 
+    files={}
+    images={}
     for member in current_group.members:
         for path in os.listdir("./static/assets/" + str(member.id)):
             if models.Message.query.filter_by(group_recipient_id=discussion_id, id=path.split(".", 1)[0]).first() is not None:
@@ -248,6 +242,29 @@ def send_msg(discussion_id):
                 print('Document uploaded successfully.')
         return msg_view(discussion_id)
 
+    if "form-search-group-body" in request.form:
+        groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).filter(
+            models.Group.name.contains(flask.request.form.get('form-search-group-body'))).all()
+        current_group = models.Group.query.filter_by(id=discussion_id).first_or_404()
+        print("test")
+        messages = models.Message.query.filter_by(group_recipient_id=current_group.id).all()
+
+        files = {}
+        images = {}
+        for member in current_group.members:
+            for path in os.listdir("./static/assets/" + str(member.id)):
+                if models.Message.query.filter_by(group_recipient_id=discussion_id,
+                                                  id=path.split(".", 1)[0]).first() is not None:
+                    if path.split(".", 1)[1] == "png" or path.split(".", 1)[1] == "jpg":
+                        images[int(path.split(".", 1)[0])] = path
+                    else:
+                        files[int(path.split(".", 1)[0])] = path
+
+
+
+        return render_template('msg.html', messages=messages, discussion=current_group,
+                               discussions_list=groups_list, current_user=current_user, models=models, images=images,
+                               files=files)
 
     if "form-search-msg-body" in request.form:
         groups_list = models.Group.query.filter(models.Group.members.any(id=current_user.id)).all()
@@ -255,9 +272,6 @@ def send_msg(discussion_id):
 
         messages = models.Message.query.filter_by(group_recipient_id=current_group.id).filter(
             models.Message.body.contains(flask.request.form.get('form-search-msg-body'))).all()
-
-        for message in messages:
-            message.seen_by(current_user)
 
         return render_template('msg.html', messages=messages, discussion=current_group,
                                discussions_list=groups_list, current_user=current_user, models=models)

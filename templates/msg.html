@@ -23,7 +23,14 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa fa-search"></i></span>
                                 </div>
-                                <input type="text" class="form-control" placeholder="Search...">
+                                <form action="{{ url_for("send_msg", discussion_id =discussion.id)}}" method="post">
+
+
+
+
+
+                                <input type="text" id="form-search-group" name="form-search-group-body" class="form-control" placeholder="Search...">
+</form>
                             </div>
                             <ul class="list-unstyled chat-list mt-2 mb-0">
 
