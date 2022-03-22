@@ -273,8 +273,19 @@ def send_msg(discussion_id):
         messages = models.Message.query.filter_by(group_recipient_id=current_group.id).filter(
             models.Message.body.contains(flask.request.form.get('form-search-msg-body'))).all()
 
+        files = {}
+        images = {}
+        for member in current_group.members:
+            for path in os.listdir("./static/assets/" + str(member.id)):
+                if models.Message.query.filter_by(group_recipient_id=discussion_id,
+                                                  id=path.split(".", 1)[0]).first() is not None:
+                    if path.split(".", 1)[1] == "png" or path.split(".", 1)[1] == "jpg":
+                        images[int(path.split(".", 1)[0])] = path
+                    else:
+                        files[int(path.split(".", 1)[0])] = path
+
         return render_template('msg.html', messages=messages, discussion=current_group,
-                               discussions_list=groups_list, current_user=current_user, models=models)
+                               discussions_list=groups_list, current_user=current_user, models=models, images=images, files=files)
 
     return msg_view(discussion_id)
 
@@ -311,6 +322,7 @@ def group_settings(group_id):
 
     if form_changename.validate_on_submit() :
         current_group.name = form_changename.name.data
+        db.session.commit()
         flash('Name Changed !')
         return render_template('group_settings.html', title='Group Settings',group = current_group,form_changename=form_changename, form_addmember=form_addmember, form_changeprofile=form_changeprofile)
 

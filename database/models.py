@@ -233,9 +233,9 @@ def size_with_unit(size):
     if size<1024:
         return str(size)+" bytes"
     if size<1024**2:
-        return str(round(size/1024,2))+" MB"
+        return str(round(size/1024,2))+" kB"
     if size<1024**3:
-        return str(round(size/1024**2,2))+" GB"
+        return str(round(size/1024**2,2))+" MB"
     if size<1024**4:
-        return str(round(size/1024**3,2))+" TB"
+        return str(round(size/1024**3,2))+" GB"
     #on devrait être assez large avec ça mais en théorie il faudrait un else
