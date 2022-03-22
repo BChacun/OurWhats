@@ -43,7 +43,7 @@
                                                         {% set targetted_user = group.members.pop() %}
                                                         {{ targetted_user.is_logged() | safe }}
                                                         {{ targetted_user.last_seen.strftime('%Y-%m-%d')}}
-                                                        <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
+                                                        <span class="glyphicon glyphicon-user"><mark>{{ current_user.unread_messages_count_in_group(group.id) }}</mark></span>
                                                     </div>
 
                                                 {% elif group.members_count()==2 %}
@@ -54,14 +54,14 @@
                                                         {% set targetted_user = group.get_other_user_first(current_user) %}
                                                         {{ targetted_user.is_logged() | safe }}
                                                         {{ targetted_user.last_seen.strftime('%Y-%m-%d')}}
-                                                        <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
+                                                        <span class="glyphicon glyphicon-user"><mark>{{ current_user.unread_messages_count_in_group(group.id) }}</mark></span>
                                                     </div>
 
                                                 {% else %}
                                                     <div class="name">{{ group.name }} </div>
                                                     <div class="status">
 
-                                                        <span class="glyphicon glyphicon-user"><mark>{{ group.count_not_seen_msg(current_user) }}</mark></span>
+                                                        <span class="glyphicon glyphicon-user"><mark>{{ current_user.unread_messages_count_in_group(group.id) }}</mark></span>
                                                     </div>
                                                 {% endif %}
 
