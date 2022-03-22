@@ -235,7 +235,7 @@ def send_msg(discussion_id):
         assets_dir = os.path.join(os.path.dirname(app.instance_path), 'static/assets')
         f = form.image.data
 
-        if flask.request.form.get('form-send-msg-body') is not "" or f is not None:
+        if flask.request.form.get('form-send-msg-body') != "" or f is not None:
             msg_id=models.Message.send_message_to_group(flask.request.form.get('form-send-msg-body'),current_user.id,discussion_id,None,"text")
 
             if f is not None:

@@ -41,16 +41,19 @@ class User(UserMixin, db.Model):
     def get_avatar(self):
         return "/assets/" + str(self.id) + "/profile.jpg"
 
-    def unread_messages_count(self):
-        return len(db.session.query(Message).join(Group).join(User).filter((User.id==self.id) & (sqlalchemy.not_(Message.seen.any(id=self.id)))).all())
-
     def unread_messages(self):
         size=0
-        query=db.session.query(Message).join(Group).join(User).filter((User.id == self.id) & (Message.seen.any(id=self.id))).all()
+        query=db.session.query(Message).join(Group).filter(Group.members.any(id=self.id)).filter( ~Message.seen.any(id=self.id)).all()
         for message in query:
             size+=sys.getsizeof(message)
         return len(query), size_with_unit(size)
 
+    def unread_messages_count_in_group(self, group_id):
+        query=db.session.query(Message).join(Group, Message.group_recipient_id==Group.id).filter(Group.id==group_id).filter( ~Message.seen.any(id=self.id)).all()
+        return len(query)
+
+    def unread_messages_count(self):
+        return self.unread_messages()[0]
 
     def messages_sent(self, type):
         size = 0
@@ -60,7 +63,7 @@ class User(UserMixin, db.Model):
         return len(query), size_with_unit(size)
 
     def files_sent(self):
-        count=0
+        count=-1 #profile picture is also in this directory
         size=0
         dir_path="./static/assets/"+str(self.id)
         for path in os.scandir(dir_path):
@@ -73,7 +76,7 @@ class User(UserMixin, db.Model):
     def messages_received(self):
         size = 0       #la taille en octets
         fcount , fsize = self.files_received()
-        query=db.session.query(Message).join(Group).join(User).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all()
+        query=db.session.query(Message).join(Group).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all()
         for message in query:
             size += sys.getsizeof(message)
         return len(query)+fcount, size_with_unit(size+fsize)
@@ -81,13 +84,14 @@ class User(UserMixin, db.Model):
     def files_received(self):
         count=0
         size=0
-        query=db.session.query(Message).join(Group).join(User).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all()
+        query=db.session.query(Message).join(Group).filter((Message.sender_id!=self.id) & (Group.members.any(id=self.id))).all()
         for message in query:
             dir_path = "./static/assets/" + str(message.sender_id)
             for path in os.listdir(dir_path):
-                if os.path.isfile(os.path.join(dir_path, path)) & (os.path.basename(path).split(".", 1)[0] == str(message.sender_id)):
+                if os.path.isfile(os.path.join(dir_path, path)) and (os.path.basename(path).split(".", 1)[0] == str(message.id)):
+                    print(dir_path, path)
                     count+=1
-                    size+=os.path.getsize(path)
+                    size+=os.path.getsize(os.path.join(dir_path, path))
         return count,size
 
     def is_logged(self):
